@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Vazirmatn";
+  src: local("Vazirmatn"),
+    url(../public/fonts/Vazirmatn-Medium.ttf) format("ttf");
+}
+
+:root {
+  font-family: "Vazirmatn";
+  background-color: white;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
