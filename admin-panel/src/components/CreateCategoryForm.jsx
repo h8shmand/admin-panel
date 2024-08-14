@@ -77,7 +77,7 @@ export default function CreateCategoryForm({ visible, setVisible }) {
             onChange={(e) => setDescription(e.target.value)}
           />
           <button className="w-fit py-1 px-6 bg-mainBlue rounded flex items-center text-white my-8">
-            ورود
+            ایجاد
           </button>
         </form>
       </div>

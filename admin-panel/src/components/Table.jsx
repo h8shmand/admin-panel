@@ -1,13 +1,15 @@
 export default function Table({ tableHeaders }) {
   return (
     <div className="block w-full overflow-x-auto mt-10 ">
-      <table className="w-full">
+      <table className="w-full table-fixed min-w-[1247px]">
         <thead>
           <tr className="border-b-2 border-gray-500">
             {tableHeaders.map((item, index) => (
               <th
                 key={index}
-                className={`w-[${100 / tableHeaders.length}%] text-start`}
+                className={`w-[${Math.round(
+                  100 / tableHeaders.length
+                )}%] text-start`}
               >
                 {item}
               </th>
@@ -17,23 +19,23 @@ export default function Table({ tableHeaders }) {
         <tbody>
           <tr className="border-b-2 border-gray-200">
             <td
-              className={`w-[${
+              className={`w-[${Math.round(
                 100 / tableHeaders.length
-              }%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
+              )}%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
             >
               خدمات و سرویس ها
             </td>
             <td
-              className={`w-[${
+              className={`w-[${Math.round(
                 100 / tableHeaders.length
-              }%] overflow-x-hidden whitespace-nowrap min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
+              )}%] overflow-x-hidden whitespace-nowrap  py-[5px] pl-[20px]`}
             >
-              ما در ایران ساین با ارائه مجموعه ای از خدمات و سرویس ها
+              <div>ما در ایران ساین با ارائه مجموعه ای از خدمات و سرویس ها</div>
             </td>
             <td
-              className={`w-[${
+              className={`w-[${Math.round(
                 100 / tableHeaders.length
-              }%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
+              )}%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
             >
               <img
                 className="h-11 w-11 rounded-lg"
@@ -42,23 +44,23 @@ export default function Table({ tableHeaders }) {
               />
             </td>
             <td
-              className={`w-[${
+              className={`w-[${Math.round(
                 100 / tableHeaders.length
-              }%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
+              )}%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
             >
               1403/02/24
             </td>
             <td
-              className={`w-[${
+              className={`w-[${Math.round(
                 100 / tableHeaders.length
-              }%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
+              )}%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
             >
               1403/05/07
             </td>
             <td
-              className={`flex flex-row items-center justify-center w-[${
+              className={`flex flex-row items-center justify-center w-[${Math.round(
                 100 / tableHeaders.length
-              }%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap `}
+              )}%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap `}
             >
               <button>ویرایش</button>
               <button>حذف</button>

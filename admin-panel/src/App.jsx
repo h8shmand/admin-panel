@@ -5,6 +5,7 @@ import AppLayout from "./components/AppLayout";
 import Categories from "./components/Categories";
 import Products from "./components/Products";
 import Login from "./components/Login";
+import Articles from "./components/Article";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             path="categories/create-category"
             element={<div>create</div>}
           />
+          <Route path="articles" element={<Articles />} />
         </Route>
       </Routes>
     </div>
