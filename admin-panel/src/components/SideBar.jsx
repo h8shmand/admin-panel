@@ -26,7 +26,7 @@ export default function SideBar({ isMenuOpen, setIsMenuOpen }) {
         <Btn toUrl="articles" text="مقالات" setIsMenuOpen={setIsMenuOpen}>
           <MdArticle />
         </Btn>
-        <Btn toUrl="/" text="کاربران" setIsMenuOpen={setIsMenuOpen}>
+        <Btn toUrl="users" text="کاربران" setIsMenuOpen={setIsMenuOpen}>
           <FaUser />
         </Btn>
       </div>

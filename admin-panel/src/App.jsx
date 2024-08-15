@@ -6,6 +6,7 @@ import Categories from "./components/Categories";
 import Products from "./components/Products";
 import Login from "./components/Login";
 import Articles from "./components/Article";
+import Users from "./components/Users";
 
 function App() {
   return (
@@ -16,10 +17,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="categories" element={<Categories />} />
           <Route path="products" element={<Products />} />
-          <Route
-            path="categories/create-category"
-            element={<div>create</div>}
-          />
+          <Route path="users" element={<Users />}></Route>
           <Route path="articles" element={<Articles />} />
         </Route>
       </Routes>

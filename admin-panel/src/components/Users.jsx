@@ -2,32 +2,23 @@ import { FaPlus } from "react-icons/fa";
 import SimpleButton from "./SimpleButton";
 import Table from "./Table";
 import { useState } from "react";
-import CreateProductForm from "./CreateProductForm";
+import CreateUserForm from "./CreateUserForm";
 
-const tableHeaders = [
-  "عنوان محصول",
-  "دسته بندی",
-  "نویسنده",
-  "توضیحات",
-  "تصویر",
-  "تاریخ ایجاد",
-  "تاریخ بروزرسانی",
-  "",
-];
+const tableHeaders = ["نام و نام خانوادگی", "ایمیل", "نقش", "تاریخ ایجاد", ""];
 
-export default function Products() {
+export default function Users() {
   const [formVisible, setFormVisible] = useState(false);
   const handleCreateForm = () => {
     setFormVisible(!formVisible);
   };
   return (
     <div className="w-full h-full">
-      <CreateProductForm visible={formVisible} setVisible={setFormVisible} />
+      <CreateUserForm visible={formVisible} setVisible={setFormVisible} />
       <div className="products-container w-full h-full p-4">
         <h2 className="font-bold text-mainBlue text-2xl block mb-4">
-          لیست محصولات
+          لیست کاربران
         </h2>
-        <SimpleButton text="افزودن محصول جدید" onClick={handleCreateForm}>
+        <SimpleButton text="افزودن کاربر جدید" onClick={handleCreateForm}>
           <FaPlus />
         </SimpleButton>
         <Table tableHeaders={tableHeaders}></Table>
