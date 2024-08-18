@@ -1,9 +1,14 @@
+import { useProducts } from "./context/ProductsProvider";
+import { useUsers } from "./context/UsersProvider";
+
 export default function Dashboard() {
+  const { products } = useProducts();
+  const { users } = useUsers();
   return (
     <div className="dashboard-container h-full w-full flex overflow-y-auto">
       <div className="cards-list w-full flex flex-row flex-wrap h-fit justify-center">
-        <DashboardCards title={"تعداد کاربران:"} count={3} />
-        <DashboardCards title={"تعداد محصولات:"} count={3} />
+        <DashboardCards title={"تعداد کاربران:"} count={users.length} />
+        <DashboardCards title={"تعداد محصولات:"} count={products.length} />
         <DashboardCards title={"تعداد مقالات:"} count={3} />
         <DashboardCards title={"تعداد دسته بندی ها:"} count={3} />
       </div>

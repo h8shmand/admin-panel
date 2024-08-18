@@ -1,20 +1,44 @@
+import { useFormik } from "formik";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import * as Yup from "yup";
+import FormikInput from "./formikInputs/FormikInput";
+import FormikImageInput from "./formikInputs/FormikImageInput";
+import FormikTextArea from "./formikInputs/FormikTextArea";
+import { useAuth } from "./context/AuthProvider";
+import { useProducts } from "./context/ProductsProvider";
+const initialValues = {
+  title: "",
+  categoryName: "",
+  image: "",
+  description: "",
+};
+const validationSchema = Yup.object({
+  title: Yup.string().required("نام محصول را وارد کنید"),
+  categoryName: Yup.string().required("نام دسته بندی را وارد کنید"),
+  image: Yup.mixed().required("تصویر را انتخاب کنید"),
+  description: Yup.string()
+    .min(6, "توضیحات باید حداقل شامل 6 کاراکتر باشد")
+    .required("توضیحات را وارد کنید"),
+});
 
 export default function CreateProductForm({ visible, setVisible }) {
-  const [name, setName] = useState("");
-  const [categoryName, setCategoryName] = useState("");
-  const [image, setImage] = useState("");
-  const [description, setDescription] = useState("");
+  const { createProduct } = useProducts();
   const handleCloseForm = (e) => {
-    // e.preventDefault();
     if (e.target === e.currentTarget) {
       setVisible(false);
-      setName("");
-      setImage("");
-      setDescription("");
     }
   };
+  const onSubmit = async (values) => {
+    createProduct(values);
+  };
+
+  const formik = useFormik({
+    initialValues,
+    onSubmit,
+    validationSchema,
+    validateOnMount: true,
+  });
   return (
     <div
       onClick={handleCloseForm}
@@ -33,61 +57,37 @@ export default function CreateProductForm({ visible, setVisible }) {
           افزودن محصول
         </h2>
         <form
-          action="submit"
+          onSubmit={formik.handleSubmit}
           className="flex flex-col w-full items-center mt-6 "
         >
-          <label
-            htmlFor="productNameInput"
-            className="block w-[70%] text-right"
+          <FormikInput label={"نام محصول"} name={"title"} formik={formik} />
+
+          <select
+            name=""
+            className="border-2 outline-0 border-mainBlue rounded w-full h-10 text-sm px-2 "
+            id=""
           >
-            نام محصول
-          </label>
-          <input
-            name="productNameInput"
-            type="text"
-            className="border-2 border-mainBlue rounded w-[70%] h-10 text-sm px-2 mb-4"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            <option value="">تکنولوژی</option>
+            <option value="">تکنولوژی</option>
+            <option value="">تکنولوژی</option>
+          </select>
+
+          <FormikImageInput
+            label={"تصویر محصول"}
+            name={"image"}
+            formik={formik}
           />
-          <label
-            htmlFor="productCategoryNameInput"
-            className="block w-[70%] text-right"
+          <FormikTextArea
+            label={"توضیحات محصول"}
+            name={"description"}
+            formik={formik}
+            className="h-24"
+          />
+          <button
+            disabled={!formik.isValid}
+            type="submit"
+            className="w-fit py-1 px-6 bg-mainBlue rounded flex items-center text-white my-8"
           >
-            نام دسته بندی
-          </label>
-          <input
-            name="productCategoryNameInput"
-            type="text"
-            className="border-2 border-mainBlue rounded w-[70%] h-10 text-sm px-2 mb-4"
-            value={categoryName}
-            onChange={(e) => setCategoryName(e.target.value)}
-          />
-          <label htmlFor="productImgInput" className="block w-[70%] text-right">
-            تصویر محصول
-          </label>
-          <input
-            name="productImgInput"
-            id="productImgInput"
-            type="file"
-            accept="image/*"
-            className="border-2 border-mainBlue rounded w-[70%] h-10 text-sm px-2 mb-4"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-          />
-          <label
-            htmlFor="productDescriptionTextArea"
-            className="block w-[70%] text-right"
-          >
-            توضیحات محصول
-          </label>
-          <textarea
-            name="productDescriptionTextArea"
-            type="text"
-            className="border-2 border-mainBlue rounded w-[70%] h-24 text-sm px-2 mb-4 resize-none"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <button className="w-fit py-1 px-6 bg-mainBlue rounded flex items-center text-white my-8">
             ایجاد
           </button>
         </form>

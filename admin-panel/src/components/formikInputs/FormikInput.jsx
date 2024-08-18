@@ -1,6 +1,12 @@
 import { PiWarningOctagonFill } from "react-icons/pi";
 
-export default function FormikInput({ label, name, formik, type = "text" }) {
+export default function FormikInput({
+  label,
+  name,
+  formik,
+  type = "text",
+  className = "",
+}) {
   return (
     <div className="w-[70%] relative">
       <label htmlFor={name} className="block text-right">
@@ -10,7 +16,7 @@ export default function FormikInput({ label, name, formik, type = "text" }) {
         name={name}
         onBlur={formik.handleBlur}
         type={type}
-        className={`border-2 outline-0 border-mainBlue rounded w-full h-10 text-sm px-2 ${
+        className={`border-2 outline-0 border-mainBlue rounded w-full h-10 text-sm px-2 ${className} ${
           formik.errors[name] && formik.touched[name] ? "border-red-500" : ""
         }`}
         value={formik.values[name]}

@@ -2,10 +2,11 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
 import { PiWarningOctagonFill } from "react-icons/pi";
-import FormikInput from "./FormikInput";
+import FormikInput from "./formikInputs/FormikInput";
 import axios from "axios";
 import Loader from "./Loader";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./context/AuthProvider";
 const initialValues = {
   email: "",
   password: "",
@@ -24,22 +25,10 @@ const validationSchema = Yup.object({
 });
 
 export default function Login() {
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, isLoading, user } = useAuth();
+  console.log(user);
   const onSubmit = async (values) => {
-    try {
-      setIsLoading(true);
-      const res = await axios.post(
-        "http://localhost:8008/api/users/login",
-        values
-      );
-      const fullName = res.data.data.fullName;
-      navigate("/dashboard", { state: { fullName } });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+    login(values);
   };
 
   const formik = useFormik({

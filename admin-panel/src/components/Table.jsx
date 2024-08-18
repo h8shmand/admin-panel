@@ -16,7 +16,7 @@ export default function Table({ tableHeaders, children }) {
             ))}
           </tr>
         </thead>
-        {children}
+        <tbody>{children}</tbody>
       </table>
     </div>
   );
