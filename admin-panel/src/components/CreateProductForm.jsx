@@ -7,15 +7,15 @@ import FormikImageInput from "./formikInputs/FormikImageInput";
 import FormikTextArea from "./formikInputs/FormikTextArea";
 import { useAuth } from "./context/AuthProvider";
 import { useProducts } from "./context/ProductsProvider";
+import { usecategories } from "./context/CategoriesProvider";
+import SelectInput from "./context/SelectInput";
 const initialValues = {
   title: "",
-  categoryName: "",
   image: "",
   description: "",
 };
 const validationSchema = Yup.object({
   title: Yup.string().required("نام محصول را وارد کنید"),
-  categoryName: Yup.string().required("نام دسته بندی را وارد کنید"),
   image: Yup.mixed().required("تصویر را انتخاب کنید"),
   description: Yup.string()
     .min(6, "توضیحات باید حداقل شامل 6 کاراکتر باشد")
@@ -24,13 +24,19 @@ const validationSchema = Yup.object({
 
 export default function CreateProductForm({ visible, setVisible }) {
   const { createProduct } = useProducts();
+  const { categories } = usecategories();
+  const [categoryId, setCategoryId] = useState("");
+
   const handleCloseForm = (e) => {
     if (e.target === e.currentTarget) {
       setVisible(false);
     }
   };
   const onSubmit = async (values) => {
-    createProduct(values);
+    createProduct({ ...values, categoryId });
+    setVisible(false);
+
+    console.log(values);
   };
 
   const formik = useFormik({
@@ -62,16 +68,14 @@ export default function CreateProductForm({ visible, setVisible }) {
         >
           <FormikInput label={"نام محصول"} name={"title"} formik={formik} />
 
-          <select
-            name=""
-            className="border-2 outline-0 border-mainBlue rounded w-full h-10 text-sm px-2 "
-            id=""
-          >
-            <option value="">تکنولوژی</option>
-            <option value="">تکنولوژی</option>
-            <option value="">تکنولوژی</option>
-          </select>
-
+          <SelectInput
+            name={"selectCategory"}
+            label={"دسته بندی"}
+            data={categories}
+            selectedValue={categoryId}
+            setSeletedValue={setCategoryId}
+            errorMessage={"دسته بندی را انتخاب کنید"}
+          />
           <FormikImageInput
             label={"تصویر محصول"}
             name={"image"}

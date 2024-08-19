@@ -16,3 +16,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.custom-toastify {
+  font-family: "Vazirmatn";
+}
+
+.Toastify__toast-body div {
+  font-family: "Vazirmatn";
+  font-size: 12px;
+}

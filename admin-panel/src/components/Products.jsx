@@ -41,8 +41,8 @@ export default function Products() {
           {products.map((item) => (
             <tr key={item.id} className="border-b-2 border-gray-200">
               <td>{item.title}</td>
-              <td>{item.category.name}</td>
-              <td>{item.user.fullName}</td>
+              <td>{item.category?.name}</td>
+              <td>{item.user?.fullName}</td>
               <td>{item.content}</td>
               <td>
                 <img className="w-12 h-12" src={item.url} alt={item.title} />

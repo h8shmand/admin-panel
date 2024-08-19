@@ -18,8 +18,10 @@ export default function FormikImageInput({
         className={`border-2 outline-0 border-mainBlue rounded w-full h-10 text-sm px-2 ${className} ${
           formik.errors[name] && formik.touched[name] ? "border-red-500" : ""
         }`}
-        value={formik.values[name]}
-        onChange={formik.handleChange}
+        // value={formik.values[name]}
+        onChange={(e) => {
+          formik.setFieldValue(name, e.target.files[0]);
+        }}
         accept="image/jpeg , image/png , image/jpg"
       />
       {formik.errors[name] && formik.touched[name] && (

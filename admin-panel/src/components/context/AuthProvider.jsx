@@ -50,7 +50,6 @@ export default function AuthProvider({ children }) {
   useEffect(() => {
     if (isAuthenticated || Cookies.get("userInfos"))
       authDispatch({ type: "loadData", payload: getCookies });
-    console.log("Im here");
   }, []);
   function setCookies(res) {
     Cookies.set(

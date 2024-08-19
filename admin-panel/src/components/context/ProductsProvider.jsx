@@ -2,6 +2,9 @@ import axios from "axios";
 import { createContext, useContext, useEffect } from "react";
 import { useReducer } from "react";
 import { useAuth } from "./AuthProvider";
+import { Slide, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const BASE_URL = "http://localhost:8008/api";
 const ProductsContext = createContext(null);
 const productsInitialState = {
@@ -56,23 +59,22 @@ function productsReducer(state, action) {
 export default function ProductsProvider({ children }) {
   const [{ products, isLoading, selectedProduct, error }, productsDispatch] =
     useReducer(productsReducer, productsInitialState);
-  const { token } = useAuth();
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        productsDispatch({ type: "loading" });
-        const { data } = await axios.get(`${BASE_URL}/products`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log(data);
+  const { user, token } = useAuth();
+  async function fetchProducts() {
+    try {
+      productsDispatch({ type: "loading" });
+      const { data } = await axios.get(`${BASE_URL}/products`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        productsDispatch({ type: "products/loaded", payload: data.data });
-      } catch (error) {
-        productsDispatch({ type: "products/loaded", payload: [] });
-        productsDispatch({ type: "rejected", payload: error });
-        console.log(error);
-      }
+      productsDispatch({ type: "products/loaded", payload: data.data });
+    } catch (error) {
+      productsDispatch({ type: "products/loaded", payload: [] });
+      productsDispatch({ type: "rejected", payload: error });
+      console.log(error);
     }
+  }
+  useEffect(() => {
     if (token) fetchProducts();
   }, [token]);
 
@@ -88,25 +90,38 @@ export default function ProductsProvider({ children }) {
     }
   }
   async function createProduct(newProduct) {
-    const data = {
-      title: newProduct.title,
-      content: newProduct.description,
-      userId: "",
-      catId: "",
-      file: newProduct.image,
-    };
+    const formData = new FormData();
+    formData.append("title", newProduct.title);
+    formData.append("content", newProduct.description);
+    formData.append("userId", user.userId);
+    formData.append("catId", Number(newProduct.categoryId));
+    formData.append("file", newProduct.image);
+
     try {
       productsDispatch({ type: "loading" });
-      const { data } = await axios.post(
-        `${BASE_URL}/create_product`,
-        newProduct,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.post(`${BASE_URL}/create_product`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      fetchProducts();
       productsDispatch({ type: "product/created", payload: data });
     } catch (error) {
-      //   toast.error(error.message);
+      console.log(error.response.data.messages[0].message);
+
+      toast.error(error.response.data.messages[0].message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
     }
   }
   async function updateProduct(updatedProduct, id) {

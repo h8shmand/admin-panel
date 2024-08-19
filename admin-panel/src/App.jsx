@@ -10,24 +10,29 @@ import Users from "./components/Users";
 import AuthProvider from "./components/context/AuthProvider";
 import ProductsProvider from "./components/context/ProductsProvider";
 import UsersProvider from "./components/context/UsersProvider";
+import CategoriesProvider from "./components/context/CategoriesProvider";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <AuthProvider>
       <UsersProvider>
-        <ProductsProvider>
-          <Routes>
-            <Route index path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<AppLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="categories" element={<Categories />} />
-              <Route path="products" element={<Products />} />
-              <Route path="users" element={<Users />}></Route>
-              <Route path="articles" element={<Articles />} />
-            </Route>
-          </Routes>
-        </ProductsProvider>
+        <CategoriesProvider>
+          <ProductsProvider>
+            <Routes>
+              <Route index path="/login" element={<Login />} />
+              <Route path="/dashboard" element={<AppLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="categories" element={<Categories />} />
+                <Route path="products" element={<Products />} />
+                <Route path="users" element={<Users />}></Route>
+                <Route path="articles" element={<Articles />} />
+              </Route>
+            </Routes>
+          </ProductsProvider>
+        </CategoriesProvider>
       </UsersProvider>
+      <ToastContainer />
     </AuthProvider>
   );
 }

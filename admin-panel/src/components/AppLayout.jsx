@@ -7,8 +7,7 @@ import { useProducts } from "./context/ProductsProvider";
 
 export default function AppLayout() {
   const [isMenuOpen, setIsManuOpen] = useState(false);
-  const { user, token, getCookies } = useAuth();
-  console.log(getCookies());
+  const { user } = useAuth();
 
   const handleCloseMenu = (e) => {
     if (isMenuOpen && !e.target.classList.contains("side-bar")) {

@@ -59,8 +59,6 @@ export default function UsersProvider({ children }) {
     usersInitialState
   );
   const { user, token } = useAuth();
-  console.log(user);
-
   useEffect(() => {
     async function fetchUsers() {
       try {
