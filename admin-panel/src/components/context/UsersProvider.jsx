@@ -2,6 +2,8 @@ import axios from "axios";
 import { createContext, useContext, useEffect } from "react";
 import { useReducer } from "react";
 import { useAuth } from "./AuthProvider";
+import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 const BASE_URL = "http://localhost:8008/api";
 const UsersContext = createContext(null);
 const usersInitialState = {
@@ -59,20 +61,20 @@ export default function UsersProvider({ children }) {
     usersInitialState
   );
   const { user, token } = useAuth();
-  useEffect(() => {
-    async function fetchUsers() {
-      try {
-        usersDispatch({ type: "loading" });
-        const { data } = await axios.get(`${BASE_URL}/users`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        usersDispatch({ type: "users/loaded", payload: data.data });
-      } catch (error) {
-        usersDispatch({ type: "users/loaded", payload: [] });
-        usersDispatch({ type: "rejected", payload: error });
-        console.log(error);
-      }
+  async function fetchUsers() {
+    try {
+      usersDispatch({ type: "loading" });
+      const { data } = await axios.get(`${BASE_URL}/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      usersDispatch({ type: "users/loaded", payload: data.data });
+    } catch (error) {
+      usersDispatch({ type: "users/loaded", payload: [] });
+      usersDispatch({ type: "rejected", payload: error });
+      console.log(error);
     }
+  }
+  useEffect(() => {
     if (token) fetchUsers();
   }, [token]);
 
@@ -84,18 +86,48 @@ export default function UsersProvider({ children }) {
       });
       usersDispatch({ type: "user/loaded", payload: data });
     } catch (error) {
-      //   toast.error(error.message);
+      toast.error(error.response.data.messages[0].message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
     }
   }
   async function createUser(newUser) {
+    const req = {
+      fullName: newUser.fullName,
+      email: newUser.email,
+      password: newUser.password,
+      confPassword: newUser.confPassword,
+      isAdmin: Number(newUser.role),
+    };
     try {
       usersDispatch({ type: "loading" });
-      const { data } = await axios.post(`${BASE_URL}/users/register`, newUser, {
+      const { data } = await axios.post(`${BASE_URL}/users/register`, req, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      fetchUsers();
       usersDispatch({ type: "user/created", payload: data });
     } catch (error) {
-      //   toast.error(error.message);
+      toast.error(error.response.data.messages[0].message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
     }
   }
   // async function updateUser(updatedUser, id) {
@@ -117,10 +149,25 @@ export default function UsersProvider({ children }) {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-    } catch (error) {}
+    } catch (error) {
+      toast.error(error.response.data.messages[0].message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
+    }
   }
   return (
-    <UsersContext.Provider value={{ users, isLoading, selectedUser }}>
+    <UsersContext.Provider
+      value={{ users, isLoading, selectedUser, createUser }}
+    >
       {children}
     </UsersContext.Provider>
   );

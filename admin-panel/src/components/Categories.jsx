@@ -3,6 +3,8 @@ import SimpleButton from "./SimpleButton";
 import Table from "./Table";
 import { useState } from "react";
 import CreateCategoryForm from "./CreateCategoryForm";
+import { useCategories } from "./context/CategoriesProvider";
+import NoItemsFound from "./NoItemsFound";
 
 const tableHeaders = [
   "نام",
@@ -15,9 +17,15 @@ const tableHeaders = [
 
 export default function Categories() {
   const [formVisible, setFormVisible] = useState(false);
+  const { categories, deleteCategory } = useCategories();
+
   const handleCreateForm = () => {
     setFormVisible(!formVisible);
   };
+  function handleDelete(e, id) {
+    e.preventDefault();
+    deleteCategory(id);
+  }
   return (
     <div className="w-full h-full">
       <CreateCategoryForm visible={formVisible} setVisible={setFormVisible} />
@@ -28,59 +36,39 @@ export default function Categories() {
         <SimpleButton text="افزودن دسته بندی" onClick={handleCreateForm}>
           <FaPlus />
         </SimpleButton>
-        <Table tableHeaders={tableHeaders}>
-          <tbody>
-            <tr className="border-b-2 border-gray-200">
-              <td
-                className={`w-[${Math.round(
-                  100 / tableHeaders.length
-                )}%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
-              >
-                خدمات و سرویس ها
-              </td>
-              <td
-                className={`w-[${Math.round(
-                  100 / tableHeaders.length
-                )}%] overflow-x-hidden whitespace-nowrap  py-[5px] pl-[20px]`}
-              >
-                <div>
-                  ما در ایران ساین با ارائه مجموعه ای از خدمات و سرویس ها
-                </div>
-              </td>
-              <td
-                className={`w-[${Math.round(
-                  100 / tableHeaders.length
-                )}%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
-              >
-                <img
-                  className="h-11 w-11 rounded-lg"
-                  src="https://wallpapers.com/images/featured/cool-profile-picture-87h46gcobjl5e4xu.webp"
-                  alt="fg"
-                />
-              </td>
-              <td
-                className={`w-[20px] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
-              >
-                1403/02/24
-              </td>
-              <td
-                className={`w-[${Math.round(
-                  100 / tableHeaders.length
-                )}%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap`}
-              >
-                1403/05/07
-              </td>
-              <td
-                className={`flex flex-row items-center justify-center w-[${Math.round(
-                  100 / tableHeaders.length
-                )}%] min-w-fit py-[5px] pl-[20px] whitespace-nowrap `}
-              >
-                <button>ویرایش</button>
-                <button>حذف</button>
-              </td>
-            </tr>
-          </tbody>
-        </Table>
+        {categories.length === 0 ? (
+          <NoItemsFound />
+        ) : (
+          <Table key={1} tableHeaders={tableHeaders}>
+            {categories.map((item) => (
+              <tr key={item.id} className="border-b-2 border-gray-200">
+                <td>{item.name}</td>
+                <td>{item.description}</td>
+                <td>
+                  <img className="w-12 h-12" src={item.url} alt={item.name} />
+                </td>
+                <td>{new Date(item.createdAt).toLocaleString("fa-IR")}</td>
+                <td>{new Date(item.updatedAt).toLocaleString("fa-IR")}</td>
+                <td>
+                  <div className="flex flex-row items-center">
+                    <button
+                      className="edit-btn bg-green-500 text-white h-7 rounded-lg w-14 ml-2"
+                      onClick={(e) => handleEdit(e, item.id)}
+                    >
+                      ویرایش
+                    </button>
+                    <button
+                      className="delete-btn bg-red-500 text-white h-7 rounded-lg w-14"
+                      onClick={(e) => handleDelete(e, item.id)}
+                    >
+                      حذف
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </Table>
+        )}
       </div>
     </div>
   );

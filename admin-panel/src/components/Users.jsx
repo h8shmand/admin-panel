@@ -3,11 +3,15 @@ import SimpleButton from "./SimpleButton";
 import Table from "./Table";
 import { useState } from "react";
 import CreateUserForm from "./CreateUserForm";
+import { useUsers } from "./context/UsersProvider";
 
 const tableHeaders = ["نام و نام خانوادگی", "ایمیل", "نقش", "تاریخ ایجاد", ""];
 
 export default function Users() {
   const [formVisible, setFormVisible] = useState(false);
+  const { users } = useUsers();
+  console.log(users);
+
   const handleCreateForm = () => {
     setFormVisible(!formVisible);
   };
@@ -21,7 +25,26 @@ export default function Users() {
         <SimpleButton text="افزودن کاربر جدید" onClick={handleCreateForm}>
           <FaPlus />
         </SimpleButton>
-        <Table tableHeaders={tableHeaders}></Table>
+        <Table tableHeaders={tableHeaders}>
+          {users.map((item) => (
+            <tr key={item.id} className="border-b-2 border-gray-200 h-12">
+              <td>{item.fullName}</td>
+              <td>{item.email}</td>
+              <td>{item.isAdmin ? "مدیر" : "نویسنده"}</td>
+              <td>-</td>
+              <td>
+                <div className="flex flex-row items-center">
+                  <button
+                    className="edit-btn bg-green-500 text-white h-7 rounded-lg w-14 ml-2"
+                    onClick={(e) => handleEdit(e, item.id)}
+                  >
+                    ویرایش
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </Table>
       </div>
     </div>
   );

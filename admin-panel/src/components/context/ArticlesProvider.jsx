@@ -6,44 +6,44 @@ import { Slide, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const BASE_URL = "http://localhost:8008/api";
-const ProductsContext = createContext(null);
-const productsInitialState = {
-  products: [],
+const ArticlesContext = createContext(null);
+const articlesInitialState = {
+  articles: [],
   isLoading: false,
-  selectedProduct: null,
+  selectedArticle: null,
   error: null,
 };
 
-function productsReducer(state, action) {
+function articlesReducer(state, action) {
   switch (action.type) {
     case "loading":
       return {
         ...state,
         isLoading: true,
       };
-    case "products/loaded":
+    case "articles/loaded":
       return {
         ...state,
         isLoading: false,
-        products: action.payload,
+        articles: action.payload,
       };
-    case "product/loaded":
+    case "article/loaded":
       return {
         ...state,
         isLoading: false,
-        selectedProduct: action.payload,
+        selectedArticle: action.payload,
       };
-    case "product/created":
+    case "article/created":
       return {
         ...state,
         isLoading: false,
-        products: [...state.products, action.payload],
+        articles: [...state.articles, action.payload],
       };
-    case "product/deleted":
+    case "article/deleted":
       return {
         ...state,
         isLoading: false,
-        products: state.products.filter((item) => item.id !== action.payload),
+        articles: state.articles.filter((item) => item.id !== action.payload),
       };
     case "rejected":
       return {
@@ -56,36 +56,35 @@ function productsReducer(state, action) {
   }
 }
 
-export default function ProductsProvider({ children }) {
-  const [{ products, isLoading, selectedProduct, error }, productsDispatch] =
-    useReducer(productsReducer, productsInitialState);
+export default function ArticlesProvider({ children }) {
+  const [{ articles, isLoading, selectedArticle, error }, articlesDispatch] =
+    useReducer(articlesReducer, articlesInitialState);
   const { user, token } = useAuth();
-  async function fetchProducts() {
+  async function fetchArticles() {
     try {
-      productsDispatch({ type: "loading" });
-      const { data } = await axios.get(`${BASE_URL}/products`, {
+      articlesDispatch({ type: "loading" });
+      const { data } = await axios.get(`${BASE_URL}/articles`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      productsDispatch({ type: "products/loaded", payload: data.data });
+      articlesDispatch({ type: "articles/loaded", payload: data.data });
     } catch (error) {
-      productsDispatch({ type: "products/loaded", payload: [] });
-      productsDispatch({ type: "rejected", payload: error });
+      articlesDispatch({ type: "articles/loaded", payload: [] });
+      articlesDispatch({ type: "rejected", payload: error });
       console.log(error);
     }
   }
   useEffect(() => {
-    if (token) fetchProducts();
+    if (token) fetchArticles();
   }, [token]);
 
-  async function getProduct(id) {
+  async function getArticle(id) {
     try {
-      productsDispatch({ type: "loading" });
-      const { data } = await axios.get(`${BASE_URL}/product/${id}`, {
+      articlesDispatch({ type: "loading" });
+      const { data } = await axios.get(`${BASE_URL}/article/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      productsDispatch({ type: "product/loaded", payload: data });
-      console.log(selectedProduct);
+      articlesDispatch({ type: "article/loaded", payload: data });
+      console.log(selectedArticle);
     } catch (error) {
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
@@ -101,24 +100,23 @@ export default function ProductsProvider({ children }) {
       });
     }
   }
-  async function createProduct(newProduct) {
+  async function createArticle(newarticle) {
     const formData = new FormData();
-    formData.append("title", newProduct.title);
-    formData.append("content", newProduct.description);
+    formData.append("title", newarticle.title);
+    formData.append("content", newarticle.content);
     formData.append("userId", user.userId);
-    formData.append("catId", Number(newProduct.categoryId));
-    formData.append("file", newProduct.image);
+    formData.append("file", newarticle.image);
 
     try {
-      productsDispatch({ type: "loading" });
-      const res = await axios.post(`${BASE_URL}/create_product`, formData, {
+      articlesDispatch({ type: "loading" });
+      const res = await axios.post(`${BASE_URL}/create_articles`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
-      fetchProducts();
-      productsDispatch({ type: "product/created", payload: data });
+      fetchArticles();
+      articlesDispatch({ type: "article/created", payload: data });
     } catch (error) {
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
@@ -134,10 +132,10 @@ export default function ProductsProvider({ children }) {
       });
     }
   }
-  async function updateProduct(updatedProduct, id) {
+  async function updateArticle(updatedArticle, id) {
     try {
-      productsDispatch({ type: "loading" });
-      const res = await axios.put(`${BASE_URL}/product/${id}`, updatedProduct, {
+      articlesDispatch({ type: "loading" });
+      const res = await axios.put(`${BASE_URL}/article/${id}`, updatedArticle, {
         headers: { Authorization: `Bearer ${token}` },
       });
     } catch (error) {
@@ -155,13 +153,13 @@ export default function ProductsProvider({ children }) {
       });
     }
   }
-  async function deleteProduct(id) {
+  async function deleteArticle(id) {
     try {
-      productsDispatch({ type: "loading" });
-      await axios.delete(`${BASE_URL}/product/${id}`, {
+      articlesDispatch({ type: "loading" });
+      await axios.delete(`${BASE_URL}/article/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      productsDispatch({ type: "product/deleted", payload: id });
+      articlesDispatch({ type: "article/deleted", payload: id });
     } catch (error) {
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
@@ -178,22 +176,22 @@ export default function ProductsProvider({ children }) {
     }
   }
   return (
-    <ProductsContext.Provider
+    <ArticlesContext.Provider
       value={{
-        products,
+        articles,
         isLoading,
-        selectedProduct,
-        deleteProduct,
-        createProduct,
-        updateProduct,
-        getProduct,
+        selectedArticle,
+        deleteArticle,
+        createArticle,
+        updateArticle,
+        getArticle,
       }}
     >
       {children}
-    </ProductsContext.Provider>
+    </ArticlesContext.Provider>
   );
 }
 
-export function useProducts() {
-  return useContext(ProductsContext);
+export function useArticles() {
+  return useContext(ArticlesContext);
 }

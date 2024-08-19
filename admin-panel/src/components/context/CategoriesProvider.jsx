@@ -2,6 +2,7 @@ import axios from "axios";
 import { createContext, useContext, useEffect } from "react";
 import { useReducer } from "react";
 import { useAuth } from "./AuthProvider";
+import { Slide, toast } from "react-toastify";
 const BASE_URL = "http://localhost:8008/api";
 const CategoriesContext = createContext(null);
 const categoriesInitialState = {
@@ -61,20 +62,20 @@ export default function CategoriesProvider({ children }) {
     categoriesDispatch,
   ] = useReducer(categoriesReducer, categoriesInitialState);
   const { token } = useAuth();
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        categoriesDispatch({ type: "loading" });
-        const { data } = await axios.get(`${BASE_URL}/category`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        categoriesDispatch({ type: "categories/loaded", payload: data.data });
-      } catch (error) {
-        categoriesDispatch({ type: "categories/loaded", payload: [] });
-        categoriesDispatch({ type: "rejected", payload: error });
-        console.log(error);
-      }
+  async function fetchCategories() {
+    try {
+      categoriesDispatch({ type: "loading" });
+      const { data } = await axios.get(`${BASE_URL}/category`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      categoriesDispatch({ type: "categories/loaded", payload: data.data });
+    } catch (error) {
+      categoriesDispatch({ type: "categories/loaded", payload: [] });
+      categoriesDispatch({ type: "rejected", payload: error });
+      console.log(error);
     }
+  }
+  useEffect(() => {
     if (token) fetchCategories();
   }, [token]);
 
@@ -89,26 +90,39 @@ export default function CategoriesProvider({ children }) {
       //   toast.error(error.message);
     }
   }
-  async function createCategory(newcategory) {
-    const data = {
-      title: newcategory.title,
-      content: newcategory.description,
-      userId: "",
-      catId: "",
-      file: newcategory.image,
-    };
+  async function createCategory(newCategory) {
+    const formData = new FormData();
+    formData.append("name", newCategory.title);
+    formData.append("description", newCategory.description);
+    formData.append("file", newCategory.image);
+
     try {
       categoriesDispatch({ type: "loading" });
       const { data } = await axios.post(
         `${BASE_URL}/create-category`,
-        newcategory,
+        formData,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
+      fetchCategories();
       categoriesDispatch({ type: "category/created", payload: data });
     } catch (error) {
-      //   toast.error(error.message);
+      toast.error(error.response.data.messages[0].message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
     }
   }
   async function updateCategory(updatedcategory, id) {
@@ -123,7 +137,7 @@ export default function CategoriesProvider({ children }) {
       );
     } catch (error) {}
   }
-  async function deletecategory(id) {
+  async function deleteCategory(id) {
     try {
       categoriesDispatch({ type: "loading" });
       await axios.delete(`${BASE_URL}/delete-category/${id}`, {
@@ -131,7 +145,18 @@ export default function CategoriesProvider({ children }) {
       });
       categoriesDispatch({ type: "category/deleted", payload: id });
     } catch (error) {
-      //   toast.error(error.message);
+      toast.error(error.response.data.messages[0].message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
     }
   }
   return (
@@ -140,7 +165,7 @@ export default function CategoriesProvider({ children }) {
         categories,
         isLoading,
         selectedCategory,
-        deletecategory,
+        deleteCategory,
         createCategory,
       }}
     >
@@ -149,6 +174,6 @@ export default function CategoriesProvider({ children }) {
   );
 }
 
-export function usecategories() {
+export function useCategories() {
   return useContext(CategoriesContext);
 }

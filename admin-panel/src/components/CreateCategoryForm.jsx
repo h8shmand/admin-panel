@@ -1,19 +1,41 @@
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
-
+import * as Yup from "yup";
+import { useCategories } from "./context/CategoriesProvider";
+import { useFormik } from "formik";
+import FormikInput from "./formikInputs/FormikInput";
+import FormikImageInput from "./formikInputs/FormikImageInput";
+import FormikTextArea from "./formikInputs/FormikTextArea";
+const initialValues = {
+  title: "",
+  image: "",
+  description: "",
+};
+const validationSchema = Yup.object({
+  title: Yup.string().required("نام دسته بندی را وارد کنید"),
+  image: Yup.mixed().required("تصویر را انتخاب کنید"),
+  description: Yup.string()
+    .min(6, "توضیحات باید حداقل شامل 6 کاراکتر باشد")
+    .required("توضیحات را وارد کنید"),
+});
 export default function CreateCategoryForm({ visible, setVisible }) {
-  const [name, setName] = useState("");
-  const [image, setImage] = useState("");
-  const [description, setDescription] = useState("");
+  const { createCategory } = useCategories();
   const handleCloseForm = (e) => {
-    // e.preventDefault();
     if (e.target === e.currentTarget) {
       setVisible(false);
-      setName("");
-      setImage("");
-      setDescription("");
     }
   };
+  const onSubmit = async (values) => {
+    createCategory(values);
+    setVisible(false);
+    console.log(values);
+  };
+  const formik = useFormik({
+    initialValues,
+    onSubmit,
+    validationSchema,
+    validateOnMount: true,
+  });
   return (
     <div
       onClick={handleCloseForm}
@@ -32,51 +54,27 @@ export default function CreateCategoryForm({ visible, setVisible }) {
           افزودن دسته بندی
         </h2>
         <form
-          action="submit"
+          onSubmit={formik.handleSubmit}
           className="flex flex-col w-full items-center mt-6 "
         >
-          <label
-            htmlFor="categoryNameInput"
-            className="block w-[70%] text-right"
-          >
-            نام دسته بندی
-          </label>
-          <input
-            name="categoryNameInput"
-            type="text"
-            className="border-2 border-mainBlue rounded w-[70%] h-10 text-sm px-2 mb-4"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+          <FormikInput label={"نام دسته بندی"} name={"title"} formik={formik} />
+
+          <FormikImageInput
+            label={"تصویر دسته بندی"}
+            name={"image"}
+            formik={formik}
           />
-          <label
-            htmlFor="categoryImgInput"
-            className="block w-[70%] text-right"
-          >
-            تصویر دسته بندی
-          </label>
-          <input
-            name="categoryImgInput"
-            id="categoryImgInput"
-            type="file"
-            accept="image/*"
-            className="border-2 border-mainBlue rounded w-[70%] h-10 text-sm px-2 mb-4"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
+          <FormikTextArea
+            label={"توضیحات دسته بندی"}
+            name={"description"}
+            formik={formik}
+            className="h-24"
           />
-          <label
-            htmlFor="categoryDescriptionTextArea"
-            className="block w-[70%] text-right"
+          <button
+            disabled={!formik.isValid}
+            type="submit"
+            className="w-fit py-1 px-6 bg-mainBlue rounded flex items-center text-white my-8"
           >
-            توضیحات
-          </label>
-          <textarea
-            name="categoryDescriptionTextArea"
-            type="text"
-            className="border-2 border-mainBlue rounded w-[70%] h-24 text-sm px-2 mb-4 resize-none"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <button className="w-fit py-1 px-6 bg-mainBlue rounded flex items-center text-white my-8">
             ایجاد
           </button>
         </form>

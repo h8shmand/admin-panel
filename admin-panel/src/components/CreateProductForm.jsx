@@ -5,10 +5,9 @@ import * as Yup from "yup";
 import FormikInput from "./formikInputs/FormikInput";
 import FormikImageInput from "./formikInputs/FormikImageInput";
 import FormikTextArea from "./formikInputs/FormikTextArea";
-import { useAuth } from "./context/AuthProvider";
 import { useProducts } from "./context/ProductsProvider";
-import { usecategories } from "./context/CategoriesProvider";
-import SelectInput from "./context/SelectInput";
+import { useCategories } from "./context/CategoriesProvider";
+import SelectInput from "./SelectInput";
 const initialValues = {
   title: "",
   image: "",
@@ -24,7 +23,7 @@ const validationSchema = Yup.object({
 
 export default function CreateProductForm({ visible, setVisible }) {
   const { createProduct } = useProducts();
-  const { categories } = usecategories();
+  const { categories } = useCategories();
   const [categoryId, setCategoryId] = useState("");
 
   const handleCloseForm = (e) => {

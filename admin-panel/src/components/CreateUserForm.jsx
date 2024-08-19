@@ -1,23 +1,56 @@
+import { useFormik } from "formik";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import * as Yup from "yup";
+import FormikInput from "./formikInputs/FormikInput";
+import SelectInput from "./SelectInput";
+import { useUsers } from "./context/UsersProvider";
+const roles = [
+  { name: "مدیر", id: 1 },
+  { name: "نویسنده", id: 1 },
+];
+const initialValues = {
+  fullName: "",
+  email: "",
+  password: "",
+  confPassword: "",
+};
 
+const validationSchema = Yup.object({
+  fullName: Yup.string()
+    .min(5, "نام و نام خانوادگی باید حداقل 5 کاراکتر باشد")
+    .required("نام و نام خانوادگی را وارد کنید"),
+  email: Yup.string()
+    .email("لطفا یک ایمیل معتبر وارد کنید")
+    .required("ایمیل را وارد کنید"),
+  password: Yup.string()
+    .required("گذرواژه را وارد کنید")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      "گذرواژه باید شامل حداقل 8 کاراکتر شامل حروف کوچک و حداقل یک حرف بزرگ، عدد و علامت باشد"
+    ),
+  confPassword: Yup.string()
+    .required("تکرار گذرواژه را وارد کنید")
+    .oneOf([Yup.ref("password"), null], "گذرواژه و تکرار آن برابر نمی باشد"),
+});
 export default function CreateUserForm({ visible, setVisible }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [reEnterPassword, setReEnterPassword] = useState("");
+  const { createUser } = useUsers();
   const [role, setRole] = useState("");
   const handleCloseForm = (e) => {
-    // e.preventDefault();
     if (e.target === e.currentTarget) {
       setVisible(false);
-      setName("");
-      setEmail("");
-      setPassword("");
-      setRole("");
-      setReEnterPassword("");
     }
   };
+  const onSubmit = async (values) => {
+    createUser({ ...values, role });
+    setVisible(false);
+  };
+  const formik = useFormik({
+    initialValues,
+    onSubmit,
+    validationSchema,
+    validateOnMount: true,
+  });
   return (
     <div
       onClick={handleCloseForm}
@@ -37,66 +70,41 @@ export default function CreateUserForm({ visible, setVisible }) {
         </h2>
 
         <form
-          action="submit"
+          onSubmit={formik.handleSubmit}
           className="flex flex-col w-full items-center mt-6"
         >
-          <label htmlFor="userNameInput" className="block w-[70%] text-right">
-            نام و نام خانوادگی
-          </label>
-          <input
-            name="userNameInput"
-            type="text"
-            className="border-2 border-mainBlue rounded w-[70%] h-10 text-sm px-2 mb-4"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+          <FormikInput
+            name={"fullName"}
+            label={"نام و نام خانوادگی"}
+            formik={formik}
           />
-          <label htmlFor="emailInput" className="block w-[70%] text-right">
-            ایمیل
-          </label>
-          <input
-            name="emailInput"
-            id="emailInput"
-            type="text"
-            className="border-2 border-mainBlue rounded w-[70%] h-10 text-sm px-2 mb-4"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <label htmlFor="passwordInput" className="block w-[70%] text-right">
-            گذرواژه
-          </label>
-          <input
-            name="passwordInput"
+          <FormikInput name={"email"} label={"ایمیل"} formik={formik} />
+          <FormikInput
+            name={"password"}
+            label={"گذرواژه"}
+            formik={formik}
             type="password"
-            className="border-2 border-mainBlue rounded w-[70%] h-10 text-sm px-2 mb-4 resize-none"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
           />
-          <label
-            htmlFor="reEnterPasswordInput"
-            className="block w-[70%] text-right"
+          <FormikInput
+            name={"confPassword"}
+            label={"تکرار گذرواژه"}
+            formik={formik}
+            type="password"
+          />
+          <SelectInput
+            name={"selectRole"}
+            label={"نقش"}
+            data={roles}
+            selectedValue={role}
+            setSeletedValue={setRole}
+            errorMessage={"نقش را انتخاب کنید"}
+          />
+
+          <button
+            disabled={!formik.isValid}
+            type="submit"
+            className="w-fit py-1 px-6 bg-mainBlue rounded flex items-center text-white my-8"
           >
-            تکرار گذرواژه
-          </label>
-          <input
-            name="reEnterPasswordInput"
-            type="password"
-            className="border-2 border-mainBlue rounded w-[70%] h-10 text-sm px-2 mb-4 resize-none"
-            value={reEnterPassword}
-            onChange={(e) => {
-              setReEnterPassword(e.target.value);
-            }}
-          />
-          <label htmlFor="roleInput" className="block w-[70%] text-right">
-            نقش
-          </label>
-          <input
-            name="roleInput"
-            type="text"
-            className="border-2 border-mainBlue rounded w-[70%] h-10 text-sm px-2 mb-4 resize-none"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          />
-          <button className="w-fit py-1 px-6 bg-mainBlue rounded flex items-center text-white my-8">
             ایجاد
           </button>
         </form>
