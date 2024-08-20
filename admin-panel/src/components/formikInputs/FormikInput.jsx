@@ -6,6 +6,7 @@ export default function FormikInput({
   formik,
   type = "text",
   className = "",
+  disabled = "",
 }) {
   return (
     <div className="w-[70%] relative">
@@ -14,6 +15,7 @@ export default function FormikInput({
       </label>
       <input
         name={name}
+        disabled={disabled}
         onBlur={formik.handleBlur}
         type={type}
         className={`border-2 outline-0 border-mainBlue rounded w-full h-10 text-sm px-2 ${className} ${

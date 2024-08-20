@@ -1,20 +1,14 @@
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import * as Yup from "yup";
-import FormikInput from "./formikInputs/FormikInput";
-import SelectInput from "./SelectInput";
-import { useUsers } from "./context/UsersProvider";
+import FormikInput from "../formikInputs/FormikInput";
+import SelectInput from "../SelectInput";
+import { useUsers } from "../context/UsersProvider";
 const roles = [
   { name: "مدیر", id: 1 },
   { name: "نویسنده", id: 0 },
 ];
-const initialValues = {
-  fullName: "",
-  email: "",
-  password: "",
-  confPassword: "",
-};
 
 const validationSchema = Yup.object({
   fullName: Yup.string()
@@ -23,33 +17,42 @@ const validationSchema = Yup.object({
   email: Yup.string()
     .email("لطفا یک ایمیل معتبر وارد کنید")
     .required("ایمیل را وارد کنید"),
-  password: Yup.string()
-    .required("گذرواژه را وارد کنید")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      "گذرواژه باید شامل حداقل 8 کاراکتر شامل حروف کوچک و حداقل یک حرف بزرگ، عدد و علامت باشد"
-    ),
-  confPassword: Yup.string()
-    .required("تکرار گذرواژه را وارد کنید")
-    .oneOf([Yup.ref("password"), null], "گذرواژه و تکرار آن برابر نمی باشد"),
+  password: Yup.string().matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    "گذرواژه باید شامل حداقل 8 کاراکتر شامل حروف کوچک و حداقل یک حرف بزرگ، عدد و علامت باشد"
+  ),
+  confPassword: Yup.string().oneOf(
+    [Yup.ref("password"), null],
+    "گذرواژه و تکرار آن برابر نمی باشد"
+  ),
 });
-export default function CreateUserForm({ visible, setVisible }) {
-  const { createUser } = useUsers();
+export default function UpdateUserForm({ visible, setVisible, userValues }) {
+  const initialValues = {
+    fullName: userValues?.fullName,
+    email: userValues?.email,
+    password: "",
+    confPassword: "",
+  };
+  const { updateUser, selectedUser, discardSelectedUser } = useUsers();
   const [role, setRole] = useState("");
+  useEffect(() => setRole(userValues?.isAdmin ? 1 : 0), [userValues]);
   const handleCloseForm = (e) => {
     if (e.target === e.currentTarget) {
       setVisible(false);
+      discardSelectedUser();
     }
   };
   const onSubmit = async (values) => {
-    createUser({ ...values, role });
+    updateUser({ ...values, isAdmin: role }, userValues.id);
     setVisible(false);
+    discardSelectedUser();
   };
   const formik = useFormik({
     initialValues,
     onSubmit,
     validationSchema,
     validateOnMount: true,
+    enableReinitialize: true,
   });
   return (
     <div
@@ -66,7 +69,7 @@ export default function CreateUserForm({ visible, setVisible }) {
           <FaTimes className="text-mainBlue pointer-events-none" />
         </button>
         <h2 className="text-xl text-mainBlue block w-full pr-6 mt-10">
-          افزودن کاربر
+          ویرایش کاربر
         </h2>
 
         <form
@@ -95,6 +98,7 @@ export default function CreateUserForm({ visible, setVisible }) {
             name={"selectRole"}
             label={"نقش"}
             data={roles}
+            selected={userValues?.isAdmin ? 1 : 0}
             selectedValue={role}
             setSeletedValue={setRole}
             errorMessage={"نقش را انتخاب کنید"}

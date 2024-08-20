@@ -1,10 +1,11 @@
 import { FaPlus } from "react-icons/fa";
 import SimpleButton from "./SimpleButton";
 import Table from "./Table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateProductForm from "./CreateProductForm";
 import { useProducts } from "./context/ProductsProvider";
 import NoItemsFound from "./NoItemsFound";
+import UpdateProductForm from "./updating components/UpdateProductForm";
 
 const tableHeaders = [
   "عنوان محصول",
@@ -19,6 +20,7 @@ const tableHeaders = [
 
 export default function Products() {
   const [formVisible, setFormVisible] = useState(false);
+  const [updateFormVisible, setUpdateFormVisible] = useState(false);
   const {
     products,
     deleteProduct,
@@ -36,12 +38,20 @@ export default function Products() {
   function handleEdit(e, id) {
     e.preventDefault();
     getProduct(id);
-    const values = selectedProduct;
-    console.log(values);
   }
+  useEffect(() => {
+    if (selectedProduct) {
+      setUpdateFormVisible(true);
+    }
+  }, [selectedProduct]);
   return (
     <div className="w-full h-full">
       <CreateProductForm visible={formVisible} setVisible={setFormVisible} />
+      <UpdateProductForm
+        visible={updateFormVisible}
+        setVisible={setUpdateFormVisible}
+        productValues={selectedProduct}
+      />
       <div className="products-container w-full h-full p-4">
         <h2 className="font-bold text-mainBlue text-2xl block mb-4">
           لیست محصولات
@@ -49,7 +59,7 @@ export default function Products() {
         <SimpleButton text="افزودن محصول جدید" onClick={handleCreateForm}>
           <FaPlus />
         </SimpleButton>
-        {products === 0 ? (
+        {products.length === 0 ? (
           <NoItemsFound />
         ) : (
           <Table key={2} tableHeaders={tableHeaders}>

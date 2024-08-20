@@ -1,10 +1,11 @@
 import { FaPlus } from "react-icons/fa";
 import SimpleButton from "./SimpleButton";
 import Table from "./Table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateCategoryForm from "./CreateCategoryForm";
 import { useCategories } from "./context/CategoriesProvider";
 import NoItemsFound from "./NoItemsFound";
+import UpdateCategoryForm from "./updating components/UpdateCategoryForm";
 
 const tableHeaders = [
   "نام",
@@ -17,7 +18,9 @@ const tableHeaders = [
 
 export default function Categories() {
   const [formVisible, setFormVisible] = useState(false);
-  const { categories, deleteCategory } = useCategories();
+  const [updateFormVisible, setUpdateFormVisible] = useState(false);
+  const { categories, deleteCategory, getCategory, selectedCategory } =
+    useCategories();
 
   const handleCreateForm = () => {
     setFormVisible(!formVisible);
@@ -26,9 +29,23 @@ export default function Categories() {
     e.preventDefault();
     deleteCategory(id);
   }
+  function handleEdit(e, id) {
+    e.preventDefault();
+    getCategory(id);
+  }
+  useEffect(() => {
+    if (selectedCategory) {
+      setUpdateFormVisible(true);
+    }
+  }, [selectedCategory]);
   return (
     <div className="w-full h-full">
       <CreateCategoryForm visible={formVisible} setVisible={setFormVisible} />
+      <UpdateCategoryForm
+        visible={updateFormVisible}
+        setVisible={setUpdateFormVisible}
+        categoryValues={selectedCategory}
+      />
       <div className="categories-container w-full h-full p-4">
         <h2 className="font-bold text-mainBlue text-2xl block mb-4">
           لیست دسته بندی ها

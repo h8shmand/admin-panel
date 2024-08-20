@@ -10,8 +10,8 @@ const ProductsContext = createContext(null);
 const productsInitialState = {
   products: [],
   isLoading: false,
-  selectedProduct: null,
-  error: null,
+  selectedProduct: "",
+  error: "",
 };
 
 function productsReducer(state, action) {
@@ -51,6 +51,12 @@ function productsReducer(state, action) {
         isLoading: false,
         error: action.payload,
       };
+    case "discardSelected":
+      return {
+        ...state,
+        isLoading: false,
+        selectedProduct: "",
+      };
     default:
       throw new Error("Action Not Available!");
   }
@@ -84,8 +90,7 @@ export default function ProductsProvider({ children }) {
       const { data } = await axios.get(`${BASE_URL}/product/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      productsDispatch({ type: "product/loaded", payload: data });
-      console.log(selectedProduct);
+      productsDispatch({ type: "product/loaded", payload: data.data });
     } catch (error) {
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
@@ -117,6 +122,18 @@ export default function ProductsProvider({ children }) {
           "Content-Type": "multipart/form-data",
         },
       });
+      toast.success(res.data.data[0].message, {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
       fetchProducts();
       productsDispatch({ type: "product/created", payload: data });
     } catch (error) {
@@ -135,10 +152,32 @@ export default function ProductsProvider({ children }) {
     }
   }
   async function updateProduct(updatedProduct, id) {
+    const formData = new FormData();
+    formData.append("title", updatedProduct.title);
+    formData.append("content", updatedProduct.description);
+    formData.append("userId", user.userId);
+    formData.append("catId", Number(updatedProduct.categoryId));
+    formData.append("file", updatedProduct.image);
     try {
       productsDispatch({ type: "loading" });
-      const res = await axios.put(`${BASE_URL}/product/${id}`, updatedProduct, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await axios.put(`${BASE_URL}/product/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      fetchProducts();
+      toast.success(res.data.data[0].message, {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
       });
     } catch (error) {
       toast.error(error.response.data.messages[0].message, {
@@ -177,6 +216,9 @@ export default function ProductsProvider({ children }) {
       });
     }
   }
+  function discardSelectedProduct() {
+    productsDispatch({ type: "discardSelected" });
+  }
   return (
     <ProductsContext.Provider
       value={{
@@ -187,6 +229,7 @@ export default function ProductsProvider({ children }) {
         createProduct,
         updateProduct,
         getProduct,
+        discardSelectedProduct,
       }}
     >
       {children}

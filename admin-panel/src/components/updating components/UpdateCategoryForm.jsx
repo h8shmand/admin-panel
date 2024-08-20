@@ -1,46 +1,46 @@
-import { useFormik } from "formik";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import * as Yup from "yup";
-import FormikInput from "./formikInputs/FormikInput";
-import FormikImageInput from "./formikInputs/FormikImageInput";
-import FormikTextArea from "./formikInputs/FormikTextArea";
-import { useProducts } from "./context/ProductsProvider";
-import { useCategories } from "./context/CategoriesProvider";
-import SelectInput from "./SelectInput";
-const initialValues = {
-  title: "",
-  image: "",
-  description: "",
-};
+import { useCategories } from "../context/CategoriesProvider";
+import { useFormik } from "formik";
+import FormikInput from "../formikInputs/FormikInput";
+import FormikImageInput from "../formikInputs/FormikImageInput";
+import FormikTextArea from "../formikInputs/FormikTextArea";
+
 const validationSchema = Yup.object({
-  title: Yup.string().required("نام محصول را وارد کنید"),
-  image: Yup.mixed().required("تصویر را انتخاب کنید"),
+  title: Yup.string().required("نام دسته بندی را وارد کنید"),
+  image: Yup.mixed(),
   description: Yup.string()
     .min(6, "توضیحات باید حداقل شامل 6 کاراکتر باشد")
     .required("توضیحات را وارد کنید"),
 });
-
-export default function CreateProductForm({ visible, setVisible }) {
-  const { createProduct } = useProducts();
-  const { categories } = useCategories();
-  const [categoryId, setCategoryId] = useState("");
-
+export default function UpdateCategoryForm({
+  visible,
+  setVisible,
+  categoryValues,
+}) {
+  const { updateCategory, discardSelectedCategory } = useCategories();
+  const initialValues = {
+    title: categoryValues?.name,
+    image: categoryValues?.image,
+    description: categoryValues?.description,
+  };
   const handleCloseForm = (e) => {
     if (e.target === e.currentTarget) {
       setVisible(false);
+      discardSelectedCategory();
     }
   };
   const onSubmit = async (values) => {
-    createProduct({ ...values, categoryId });
+    updateCategory(values, categoryValues.id);
     setVisible(false);
   };
-
   const formik = useFormik({
     initialValues,
     onSubmit,
     validationSchema,
     validateOnMount: true,
+    enableReinitialize: true,
   });
   return (
     <div
@@ -57,29 +57,21 @@ export default function CreateProductForm({ visible, setVisible }) {
           <FaTimes className="text-mainBlue pointer-events-none" />
         </button>
         <h2 className="text-xl text-mainBlue block w-full pr-6 mt-10">
-          افزودن محصول
+          ویرایش دسته بندی
         </h2>
         <form
           onSubmit={formik.handleSubmit}
           className="flex flex-col w-full items-center mt-6 "
         >
-          <FormikInput label={"نام محصول"} name={"title"} formik={formik} />
+          <FormikInput label={"نام دسته بندی"} name={"title"} formik={formik} />
 
-          <SelectInput
-            name={"selectCategory"}
-            label={"دسته بندی"}
-            data={categories}
-            selectedValue={categoryId}
-            setSeletedValue={setCategoryId}
-            errorMessage={"دسته بندی را انتخاب کنید"}
-          />
           <FormikImageInput
-            label={"تصویر محصول"}
+            label={"تصویر دسته بندی"}
             name={"image"}
             formik={formik}
           />
           <FormikTextArea
-            label={"توضیحات محصول"}
+            label={"توضیحات دسته بندی"}
             name={"description"}
             formik={formik}
             className="h-24"

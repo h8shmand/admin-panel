@@ -2,16 +2,17 @@ import { FaPlus } from "react-icons/fa";
 import SimpleButton from "./SimpleButton";
 import Table from "./Table";
 import CreateArticleForm from "./CreateArticleForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useArticles } from "./context/ArticlesProvider";
 import NoItemsFound from "./NoItemsFound";
+import UpdateArticleForm from "./updating components/UpdateArticlesForm";
 
 const tableHeaders = [
   "عنوان مقاله",
   "نویسنده",
   "تعداد بازدید",
   "تصویر",
-  "توضیحات",
+  "مطلب",
   "تاریخ ایجاد",
   "تاریخ بروزرسانی",
   "",
@@ -19,7 +20,9 @@ const tableHeaders = [
 
 export default function Articles() {
   const [formVisible, setFormVisible] = useState(false);
-  const { articles, deleteArticle } = useArticles();
+  const [updateFormVisible, setUpdateFormVisible] = useState(false);
+  const { articles, deleteArticle, getArticle, selectedArticle } =
+    useArticles();
   const handleCreateForm = () => {
     setFormVisible(!formVisible);
   };
@@ -27,9 +30,23 @@ export default function Articles() {
     e.preventDefault();
     deleteArticle(id);
   }
+  function handleEdit(e, id) {
+    e.preventDefault();
+    getArticle(id);
+  }
+  useEffect(() => {
+    if (selectedArticle) {
+      setUpdateFormVisible(true);
+    }
+  }, [selectedArticle]);
   return (
     <div className="w-full h-full">
       <CreateArticleForm visible={formVisible} setVisible={setFormVisible} />
+      <UpdateArticleForm
+        visible={updateFormVisible}
+        setVisible={setUpdateFormVisible}
+        articleValues={selectedArticle}
+      />
       <div className="categories-container w-full h-full p-4">
         <h2 className="font-bold text-mainBlue text-2xl block mb-4">
           لیست مقالات

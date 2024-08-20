@@ -13,6 +13,8 @@ import UsersProvider from "./components/context/UsersProvider";
 import CategoriesProvider from "./components/context/CategoriesProvider";
 import { ToastContainer } from "react-toastify";
 import ArticlesProvider from "./components/context/ArticlesProvider";
+import UpdateUserForm from "./components/updating components/UpdateUserForm";
+import UpdateProfileForm from "./components/updating components/UpdateProfileForm";
 
 function App() {
   return (
@@ -29,6 +31,7 @@ function App() {
                   <Route path="products" element={<Products />} />
                   <Route path="users" element={<Users />}></Route>
                   <Route path="articles" element={<Articles />} />
+                  <Route path="updateProfile" element={<UpdateProfileForm />} />
                 </Route>
               </Routes>
             </ArticlesProvider>

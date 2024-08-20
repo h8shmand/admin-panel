@@ -8,8 +8,8 @@ const CategoriesContext = createContext(null);
 const categoriesInitialState = {
   categories: [],
   isLoading: false,
-  selectedCategory: null,
-  error: null,
+  selectedCategory: "",
+  error: "",
 };
 
 function categoriesReducer(state, action) {
@@ -51,6 +51,12 @@ function categoriesReducer(state, action) {
         isLoading: false,
         error: action.payload,
       };
+    case "discardSelected":
+      return {
+        ...state,
+        isLoading: false,
+        selectedCategory: "",
+      };
     default:
       throw new Error("Action Not Available!");
   }
@@ -85,7 +91,7 @@ export default function CategoriesProvider({ children }) {
       const { data } = await axios.get(`${BASE_URL}/category/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      categoriesDispatch({ type: "category/loaded", payload: data });
+      categoriesDispatch({ type: "category/loaded", payload: data.data });
     } catch (error) {
       //   toast.error(error.message);
     }
@@ -108,6 +114,18 @@ export default function CategoriesProvider({ children }) {
           },
         }
       );
+      toast.success(data.data[0].message, {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
       fetchCategories();
       categoriesDispatch({ type: "category/created", payload: data });
     } catch (error) {
@@ -126,16 +144,50 @@ export default function CategoriesProvider({ children }) {
     }
   }
   async function updateCategory(updatedcategory, id) {
+    const formData = new FormData();
+    formData.append("name", updatedcategory.title);
+    formData.append("description", updatedcategory.description);
+    formData.append("file", updatedcategory.image);
+
     try {
       categoriesDispatch({ type: "loading" });
       const res = await axios.put(
         `${BASE_URL}/update-category/${id}`,
-        updatedcategory,
+        formData,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
-    } catch (error) {}
+      toast.success(res.data.data[0].message, {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
+      fetchCategories();
+    } catch (error) {
+      toast.error(error.response.data.messages[0].message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
+    }
   }
   async function deleteCategory(id) {
     try {
@@ -159,6 +211,9 @@ export default function CategoriesProvider({ children }) {
       });
     }
   }
+  function discardSelectedCategory() {
+    categoriesDispatch({ type: "discardSelected" });
+  }
   return (
     <CategoriesContext.Provider
       value={{
@@ -167,6 +222,9 @@ export default function CategoriesProvider({ children }) {
         selectedCategory,
         deleteCategory,
         createCategory,
+        getCategory,
+        updateCategory,
+        discardSelectedCategory,
       }}
     >
       {children}

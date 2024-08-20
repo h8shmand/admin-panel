@@ -28,7 +28,6 @@ export default function CreateCategoryForm({ visible, setVisible }) {
   const onSubmit = async (values) => {
     createCategory(values);
     setVisible(false);
-    console.log(values);
   };
   const formik = useFormik({
     initialValues,

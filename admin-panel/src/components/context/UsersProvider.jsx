@@ -2,15 +2,15 @@ import axios from "axios";
 import { createContext, useContext, useEffect } from "react";
 import { useReducer } from "react";
 import { useAuth } from "./AuthProvider";
+import { Slide, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { toast } from "react-toastify";
 const BASE_URL = "http://localhost:8008/api";
 const UsersContext = createContext(null);
 const usersInitialState = {
   users: [],
   isLoading: false,
-  selectedUser: null,
-  error: null,
+  selectedUser: "",
+  error: "",
 };
 
 function usersReducer(state, action) {
@@ -50,6 +50,12 @@ function usersReducer(state, action) {
         isLoading: false,
         error: action.payload,
       };
+    case "discardSelected":
+      return {
+        ...state,
+        isLoading: false,
+        selectedUser: "",
+      };
     default:
       throw new Error("Action Not Available!");
   }
@@ -84,7 +90,7 @@ export default function UsersProvider({ children }) {
       const { data } = await axios.get(`${BASE_URL}/users/user/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      usersDispatch({ type: "user/loaded", payload: data });
+      usersDispatch({ type: "user/loaded", payload: data.data });
     } catch (error) {
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
@@ -130,25 +136,25 @@ export default function UsersProvider({ children }) {
       });
     }
   }
-  // async function updateUser(updatedUser, id) {
-  //   try {
-  //     usersDispatch({ type: "loading" });
-  //     const res = await axios.put(`${BASE_URL}/users/${id}`, updatedUser, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     usersDispatch({type: "user/updated" })
-  //   } catch (error) {}
-  // }
-  async function updateProfile(updatedProfile) {
+  async function updateUser(updatedUser, id) {
     try {
       usersDispatch({ type: "loading" });
-      const res = await axios.put(
-        `${BASE_URL}/users/profile/${user.userId}`,
-        updatedProfile,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.put(`${BASE_URL}/users/${id}`, updatedUser, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchUsers();
+      toast.success(res.data.message, {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
     } catch (error) {
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
@@ -164,9 +170,67 @@ export default function UsersProvider({ children }) {
       });
     }
   }
+  async function updateProfile(updatedProfile, id) {
+    const formData = new FormData();
+    formData.append("fullName", updatedProfile.fullName);
+    formData.append("password", updatedProfile.password);
+    formData.append("confPassword", user.confPassword);
+    formData.append("file", updatedProfile.image);
+
+    try {
+      usersDispatch({ type: "loading" });
+      const res = await axios.put(
+        `${BASE_URL}/users/profile/${id}`,
+        updatedProfile,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      toast.success(res.data.message, {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
+    } catch (error) {
+      toast.error(error.response.data.messages[0].message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
+    }
+  }
+  function discardSelectedUser() {
+    usersDispatch({ type: "discardSelected" });
+  }
   return (
     <UsersContext.Provider
-      value={{ users, isLoading, selectedUser, createUser }}
+      value={{
+        users,
+        isLoading,
+        selectedUser,
+        createUser,
+        getUser,
+        updateUser,
+        discardSelectedUser,
+        updateProfile,
+      }}
     >
       {children}
     </UsersContext.Provider>

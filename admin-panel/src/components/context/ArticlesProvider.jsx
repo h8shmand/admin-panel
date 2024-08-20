@@ -10,8 +10,8 @@ const ArticlesContext = createContext(null);
 const articlesInitialState = {
   articles: [],
   isLoading: false,
-  selectedArticle: null,
-  error: null,
+  selectedArticle: "",
+  error: "",
 };
 
 function articlesReducer(state, action) {
@@ -51,6 +51,12 @@ function articlesReducer(state, action) {
         isLoading: false,
         error: action.payload,
       };
+    case "discardSelected":
+      return {
+        ...state,
+        isLoading: false,
+        selectedArticle: "",
+      };
     default:
       throw new Error("Action Not Available!");
   }
@@ -83,8 +89,7 @@ export default function ArticlesProvider({ children }) {
       const { data } = await axios.get(`${BASE_URL}/article/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      articlesDispatch({ type: "article/loaded", payload: data });
-      console.log(selectedArticle);
+      articlesDispatch({ type: "article/loaded", payload: data.data });
     } catch (error) {
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
@@ -115,6 +120,18 @@ export default function ArticlesProvider({ children }) {
           "Content-Type": "multipart/form-data",
         },
       });
+      toast.success(res.data.data[0].message, {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
       fetchArticles();
       articlesDispatch({ type: "article/created", payload: data });
     } catch (error) {
@@ -133,11 +150,32 @@ export default function ArticlesProvider({ children }) {
     }
   }
   async function updateArticle(updatedArticle, id) {
+    const formData = new FormData();
+    formData.append("title", updatedArticle.title);
+    formData.append("content", updatedArticle.content);
+    formData.append("userId", user.userId);
+    formData.append("file", updatedArticle.image);
     try {
       articlesDispatch({ type: "loading" });
-      const res = await axios.put(`${BASE_URL}/article/${id}`, updatedArticle, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await axios.put(`${BASE_URL}/article/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
+      toast.success(res.data.data[0].message, {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
+      fetchArticles();
     } catch (error) {
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
@@ -175,6 +213,9 @@ export default function ArticlesProvider({ children }) {
       });
     }
   }
+  function discardSelectedArticle() {
+    articlesDispatch({ type: "discardSelected" });
+  }
   return (
     <ArticlesContext.Provider
       value={{
@@ -185,6 +226,7 @@ export default function ArticlesProvider({ children }) {
         createArticle,
         updateArticle,
         getArticle,
+        discardSelectedArticle,
       }}
     >
       {children}

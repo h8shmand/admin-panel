@@ -8,6 +8,8 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { Slide, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const AuthContext = createContext();
 
 const authInitialState = {
@@ -82,9 +84,32 @@ export default function AuthProvider({ children }) {
         setCookies(res);
         authDispatch({ type: "login", payload: res.data.data });
         navigate("/dashboard");
+        toast.success(res.data.data.message, {
+          position: "top-center",
+          autoClose: 3500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          progress: undefined,
+          draggable: true,
+          theme: "light",
+          transition: Slide,
+          rtl: true,
+        });
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.messages[0].message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
     } finally {
       setIsLoading(false);
     }
