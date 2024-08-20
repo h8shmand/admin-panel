@@ -1,7 +1,6 @@
 import axios from "axios";
 import { createContext, useContext, useEffect } from "react";
 import { useReducer } from "react";
-import { useAuth } from "./AuthProvider";
 import { Slide, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const BASE_URL = "http://localhost:8008/api";
@@ -11,6 +10,7 @@ const usersInitialState = {
   isLoading: false,
   selectedUser: "",
   error: "",
+  selectedProfile: "",
 };
 
 function usersReducer(state, action) {
@@ -31,6 +31,12 @@ function usersReducer(state, action) {
         ...state,
         isLoading: false,
         selectedUser: action.payload,
+      };
+    case "profile/loaded":
+      return {
+        ...state,
+        isLoading: false,
+        selectedProfile: action.payload,
       };
     case "user/created":
       return {
@@ -62,16 +68,16 @@ function usersReducer(state, action) {
 }
 
 export default function UsersProvider({ children }) {
-  const [{ users, isLoading, selectedUser, error }, usersDispatch] = useReducer(
-    usersReducer,
-    usersInitialState
-  );
-  const { user, token } = useAuth();
+  const [
+    { users, isLoading, selectedUser, error, selectedProfile },
+    usersDispatch,
+  ] = useReducer(usersReducer, usersInitialState);
+  const { accessToken } = JSON.parse(Cookies.get("userInfo"));
   async function fetchUsers() {
     try {
       usersDispatch({ type: "loading" });
       const { data } = await axios.get(`${BASE_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       usersDispatch({ type: "users/loaded", payload: data.data });
     } catch (error) {
@@ -81,18 +87,42 @@ export default function UsersProvider({ children }) {
     }
   }
   useEffect(() => {
-    if (token) fetchUsers();
-  }, [token]);
+    if (accessToken) fetchUsers();
+  }, [accessToken]);
 
   async function getUser(id) {
     try {
       usersDispatch({ type: "loading" });
       const { data } = await axios.get(`${BASE_URL}/users/user/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       usersDispatch({ type: "user/loaded", payload: data.data });
     } catch (error) {
       toast.error(error.response.data.messages[0].message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: "light",
+        transition: Slide,
+        rtl: true,
+      });
+    }
+  }
+  async function getProfile(id) {
+    try {
+      usersDispatch({ type: "loading" });
+      const { data } = await axios.get(`${BASE_URL}/users/user/${id}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      usersDispatch({ type: "profile/loaded", payload: data.data });
+    } catch (error) {
+      console.log(error);
+
+      toast.error(error.response.data.message[0].message, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -117,7 +147,7 @@ export default function UsersProvider({ children }) {
     try {
       usersDispatch({ type: "loading" });
       const { data } = await axios.post(`${BASE_URL}/users/register`, req, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       fetchUsers();
       usersDispatch({ type: "user/created", payload: data });
@@ -140,7 +170,7 @@ export default function UsersProvider({ children }) {
     try {
       usersDispatch({ type: "loading" });
       const res = await axios.put(`${BASE_URL}/users/${id}`, updatedUser, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       fetchUsers();
       toast.success(res.data.message, {
@@ -174,21 +204,25 @@ export default function UsersProvider({ children }) {
     const formData = new FormData();
     formData.append("fullName", updatedProfile.fullName);
     formData.append("password", updatedProfile.password);
-    formData.append("confPassword", user.confPassword);
+    formData.append("confPassword", updatedProfile.confPassword);
     formData.append("file", updatedProfile.image);
-
     try {
       usersDispatch({ type: "loading" });
-      const res = await axios.put(
-        `${BASE_URL}/users/profile/${id}`,
-        updatedProfile,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await axios.put(`${BASE_URL}/users/profile/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      const cookieData = JSON.parse(Cookies.get("userInfo"));
+      cookieData.fullName = res.data.data.fullName;
+      cookieData.url = res.data.data.url;
+      Cookies.set("userInfo", JSON.stringify(cookieData), {
+        expires: 1,
+        secure: true,
+        sameSite: "Strict",
+      });
+      // window.location.reload();
       toast.success(res.data.message, {
         position: "top-center",
         autoClose: 3500,
@@ -225,11 +259,13 @@ export default function UsersProvider({ children }) {
         users,
         isLoading,
         selectedUser,
+        selectedProfile,
         createUser,
         getUser,
         updateUser,
         discardSelectedUser,
         updateProfile,
+        getProfile,
       }}
     >
       {children}

@@ -1,7 +1,6 @@
 import axios from "axios";
 import { createContext, useContext, useEffect } from "react";
 import { useReducer } from "react";
-import { useAuth } from "./AuthProvider";
 import { Slide, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -65,12 +64,12 @@ function productsReducer(state, action) {
 export default function ProductsProvider({ children }) {
   const [{ products, isLoading, selectedProduct, error }, productsDispatch] =
     useReducer(productsReducer, productsInitialState);
-  const { user, token } = useAuth();
+  const { userId, accessToken } = JSON.parse(Cookies.get("userInfo"));
   async function fetchProducts() {
     try {
       productsDispatch({ type: "loading" });
       const { data } = await axios.get(`${BASE_URL}/products`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
 
       productsDispatch({ type: "products/loaded", payload: data.data });
@@ -81,14 +80,14 @@ export default function ProductsProvider({ children }) {
     }
   }
   useEffect(() => {
-    if (token) fetchProducts();
-  }, [token]);
+    if (accessToken) fetchProducts();
+  }, [accessToken]);
 
   async function getProduct(id) {
     try {
       productsDispatch({ type: "loading" });
       const { data } = await axios.get(`${BASE_URL}/product/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       productsDispatch({ type: "product/loaded", payload: data.data });
     } catch (error) {
@@ -110,7 +109,7 @@ export default function ProductsProvider({ children }) {
     const formData = new FormData();
     formData.append("title", newProduct.title);
     formData.append("content", newProduct.description);
-    formData.append("userId", user.userId);
+    formData.append("userId", userId);
     formData.append("catId", Number(newProduct.categoryId));
     formData.append("file", newProduct.image);
 
@@ -118,7 +117,7 @@ export default function ProductsProvider({ children }) {
       productsDispatch({ type: "loading" });
       const res = await axios.post(`${BASE_URL}/create_product`, formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -155,14 +154,14 @@ export default function ProductsProvider({ children }) {
     const formData = new FormData();
     formData.append("title", updatedProduct.title);
     formData.append("content", updatedProduct.description);
-    formData.append("userId", user.userId);
+    formData.append("userId", userId);
     formData.append("catId", Number(updatedProduct.categoryId));
     formData.append("file", updatedProduct.image);
     try {
       productsDispatch({ type: "loading" });
       const res = await axios.put(`${BASE_URL}/product/${id}`, formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -198,7 +197,7 @@ export default function ProductsProvider({ children }) {
     try {
       productsDispatch({ type: "loading" });
       await axios.delete(`${BASE_URL}/product/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       productsDispatch({ type: "product/deleted", payload: id });
     } catch (error) {

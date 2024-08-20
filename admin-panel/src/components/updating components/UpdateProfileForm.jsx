@@ -6,7 +6,7 @@ import FormikInput from "../formikInputs/FormikInput";
 import SelectInput from "../SelectInput";
 import { useUsers } from "../context/UsersProvider";
 import FormikImageInput from "../formikInputs/FormikImageInput";
-import { useAuth } from "../context/AuthProvider";
+import { useNavigate } from "react-router-dom";
 const roles = [
   { name: "مدیر", id: 1 },
   { name: "نویسنده", id: 0 },
@@ -19,33 +19,36 @@ const validationSchema = Yup.object({
   email: Yup.string()
     .email("لطفا یک ایمیل معتبر وارد کنید")
     .required("ایمیل را وارد کنید"),
-  password: Yup.string().matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-    "گذرواژه باید شامل حداقل 8 کاراکتر شامل حروف کوچک و حداقل یک حرف بزرگ، عدد و علامت باشد"
-  ),
-  confPassword: Yup.string().oneOf(
-    [Yup.ref("password"), null],
-    "گذرواژه و تکرار آن برابر نمی باشد"
-  ),
+  password: Yup.string()
+    .required()
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      "گذرواژه باید شامل حداقل 8 کاراکتر شامل حروف کوچک و حداقل یک حرف بزرگ، عدد و علامت باشد"
+    ),
+  confPassword: Yup.string()
+    .required()
+    .oneOf([Yup.ref("password"), null], "گذرواژه و تکرار آن برابر نمی باشد"),
   image: Yup.mixed(),
 });
 export default function UpdateProfileForm() {
-  const { updateProfile, selectedUser } = useUsers();
+  const navigate = useNavigate();
+  const { updateProfile, selectedProfile } = useUsers();
   if (!window.location.href.endsWith("/updateProfile")) {
     return null;
   }
 
   const initialValues = {
-    fullName: selectedUser?.fullName,
-    email: selectedUser?.email,
-    image: selectedUser?.image,
+    fullName: selectedProfile?.fullName,
+    email: selectedProfile?.email,
+    image: "",
     password: "",
     confPassword: "",
   };
   const [role, setRole] = useState("");
-  useEffect(() => setRole(selectedUser?.isAdmin ? 1 : 0), [selectedUser]);
+  useEffect(() => setRole(selectedProfile?.isAdmin ? 1 : 0), [selectedProfile]);
   const onSubmit = async (values) => {
-    updateProfile(values, selectedUser.id);
+    updateProfile(values, selectedProfile.id);
+    navigate("/dashboard");
   };
   const formik = useFormik({
     initialValues,
@@ -83,7 +86,7 @@ export default function UpdateProfileForm() {
             label={"نقش"}
             data={roles}
             disabled="disabled"
-            selected={selectedUser?.isAdmin ? 1 : 0}
+            selected={selectedProfile?.isAdmin ? 1 : 0}
             selectedValue={role}
             setSeletedValue={setRole}
             errorMessage={"نقش را انتخاب کنید"}

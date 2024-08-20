@@ -19,6 +19,8 @@ export default function UpdateCategoryForm({
   setVisible,
   categoryValues,
 }) {
+  console.log(categoryValues);
+
   const { updateCategory, discardSelectedCategory } = useCategories();
   const initialValues = {
     title: categoryValues?.name,
@@ -70,6 +72,13 @@ export default function UpdateCategoryForm({
             name={"image"}
             formik={formik}
           />
+          <div className="w-[70%]">
+            <img
+              src={categoryValues.url}
+              alt={categoryValues.image}
+              className="w-12 h-12 block"
+            />
+          </div>
           <FormikTextArea
             label={"توضیحات دسته بندی"}
             name={"description"}

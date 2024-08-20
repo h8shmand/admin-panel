@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import AnimatedMenuBtn from "./AnimatedMenuBtn";
 import { MdLogout, MdEdit } from "react-icons/md";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthProvider";
 import { IoIosArrowDown } from "react-icons/io";
-import UpdateUserForm from "./updating components/UpdateUserForm";
 import { useUsers } from "./context/UsersProvider";
 export default function Header({
   isMenuOpen,
@@ -12,30 +11,25 @@ export default function Header({
   isOptionMenuOpen,
   setIsOptionManuOpen,
 }) {
-  const [formVisible, setFormVisible] = useState(false);
   const navigate = useNavigate();
-  const { user, logout, removeCookies } = useAuth();
-  const { getUser, selectedUser } = useUsers();
-  useEffect(() => {
-    if (user) {
-    }
-  }, [user]);
+  const { removeCookies } = useAuth();
+  const { fullName, userId, url } = JSON.parse(Cookies.get("userInfo"));
+  const { getProfile, selectedProfile } = useUsers();
 
   function handleCloseSession() {
     removeCookies();
-    logout();
     navigate("/login");
     window.location.reload();
   }
   function handleEdit(e) {
     e.preventDefault();
-    getUser(user.userId);
+    getProfile(userId);
   }
   useEffect(() => {
-    if (selectedUser) {
+    if (selectedProfile) {
       navigate("updateProfile");
     }
-  }, [selectedUser]);
+  }, [selectedProfile]);
   // if (formVisible)
   //   return (
   //     <UpdateUserForm
@@ -62,7 +56,7 @@ export default function Header({
           >
             <p className="ml-2">خروج از حساب</p>
             <MdLogout />
-          </div>{" "}
+          </div>
           <div className="change-information flex flex-row items-center my-2">
             <div
               className="ml-2"
@@ -74,12 +68,8 @@ export default function Header({
             <MdEdit />
           </div>
         </div>
-        <img
-          className="h-11 w-11 rounded-full"
-          src="https://wallpapers.com/images/featured/cool-profile-picture-87h46gcobjl5e4xu.webp"
-          alt="profile"
-        />
-        <h3 className="text-gray-100 ">{user?.fullName}</h3>
+        <img className="h-11 w-11 rounded-full" src={url} alt="profile" />
+        <h3 className="text-gray-100 ">{fullName}</h3>
         <IoIosArrowDown
           className={`text-white ml-2 ${
             isOptionMenuOpen

@@ -86,6 +86,13 @@ export default function UpdateProductForm({
             name={"image"}
             formik={formik}
           />
+          <div className="w-[70%]">
+            <img
+              src={productValues.url}
+              alt={productValues.image}
+              className="w-12 h-12 block"
+            />
+          </div>
           <FormikTextArea
             label={"توضیحات محصول"}
             name={"description"}

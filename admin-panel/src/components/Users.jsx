@@ -12,7 +12,7 @@ const tableHeaders = ["نام و نام خانوادگی", "ایمیل", "نقش
 export default function Users() {
   const [formVisible, setFormVisible] = useState(false);
   const [updateFormVisible, setUpdateFormVisible] = useState(false);
-  const { users, selectedUser, getUser } = useUsers();
+  const { users, selectedUser, getUser, discardSelectedUser } = useUsers();
   const handleCreateForm = () => {
     setFormVisible(!formVisible);
   };

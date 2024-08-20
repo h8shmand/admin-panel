@@ -69,6 +69,13 @@ export default function UpdateArticleForm({
             name={"image"}
             formik={formik}
           />
+          <div className="w-[70%]">
+            <img
+              src={articleValues.url}
+              alt={articleValues.image}
+              className="w-12 h-12 block"
+            />
+          </div>
           <FormikTextArea
             label={"مطلب مقاله"}
             name={"content"}

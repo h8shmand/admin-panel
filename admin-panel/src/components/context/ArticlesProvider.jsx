@@ -1,7 +1,6 @@
 import axios from "axios";
 import { createContext, useContext, useEffect } from "react";
 import { useReducer } from "react";
-import { useAuth } from "./AuthProvider";
 import { Slide, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -65,12 +64,12 @@ function articlesReducer(state, action) {
 export default function ArticlesProvider({ children }) {
   const [{ articles, isLoading, selectedArticle, error }, articlesDispatch] =
     useReducer(articlesReducer, articlesInitialState);
-  const { user, token } = useAuth();
+  const { userId, accessToken } = JSON.parse(Cookies.get("userInfo"));
   async function fetchArticles() {
     try {
       articlesDispatch({ type: "loading" });
       const { data } = await axios.get(`${BASE_URL}/articles`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       articlesDispatch({ type: "articles/loaded", payload: data.data });
     } catch (error) {
@@ -80,14 +79,14 @@ export default function ArticlesProvider({ children }) {
     }
   }
   useEffect(() => {
-    if (token) fetchArticles();
-  }, [token]);
+    if (accessToken) fetchArticles();
+  }, [accessToken]);
 
   async function getArticle(id) {
     try {
       articlesDispatch({ type: "loading" });
       const { data } = await axios.get(`${BASE_URL}/article/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       articlesDispatch({ type: "article/loaded", payload: data.data });
     } catch (error) {
@@ -109,14 +108,14 @@ export default function ArticlesProvider({ children }) {
     const formData = new FormData();
     formData.append("title", newarticle.title);
     formData.append("content", newarticle.content);
-    formData.append("userId", user.userId);
+    formData.append("userId", userId);
     formData.append("file", newarticle.image);
 
     try {
       articlesDispatch({ type: "loading" });
       const res = await axios.post(`${BASE_URL}/create_articles`, formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -153,13 +152,13 @@ export default function ArticlesProvider({ children }) {
     const formData = new FormData();
     formData.append("title", updatedArticle.title);
     formData.append("content", updatedArticle.content);
-    formData.append("userId", user.userId);
+    formData.append("userId", userId);
     formData.append("file", updatedArticle.image);
     try {
       articlesDispatch({ type: "loading" });
       const res = await axios.put(`${BASE_URL}/article/${id}`, formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -195,7 +194,7 @@ export default function ArticlesProvider({ children }) {
     try {
       articlesDispatch({ type: "loading" });
       await axios.delete(`${BASE_URL}/article/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       articlesDispatch({ type: "article/deleted", payload: id });
     } catch (error) {

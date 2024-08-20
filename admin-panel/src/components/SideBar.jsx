@@ -5,7 +5,7 @@ import { AiFillProduct, AiFillDashboard } from "react-icons/ai";
 export default function SideBar({ isMenuOpen, setIsMenuOpen }) {
   return (
     <div
-      className={`side-bar w-[15%] h-[99%] bg-gray-100 rounded-lg duration-500 shadow-light max-[800px]:absolute max-[800px]:w-[260px] max-[800px]:h-[99%] max-[800px]:right-[-266px] ${
+      className={`side-bar w-[15%] h-[99%] bg-gray-100 rounded-lg duration-500 shadow-light max-[800px]:absolute max-[800px]:w-[260px] max-[800px]:h-[99%] max-[800px]:right-[-266px] z-50 ${
         isMenuOpen ? "open" : ""
       }`}
     >

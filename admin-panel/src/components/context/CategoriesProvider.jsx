@@ -1,7 +1,6 @@
 import axios from "axios";
 import { createContext, useContext, useEffect } from "react";
 import { useReducer } from "react";
-import { useAuth } from "./AuthProvider";
 import { Slide, toast } from "react-toastify";
 const BASE_URL = "http://localhost:8008/api";
 const CategoriesContext = createContext(null);
@@ -67,12 +66,12 @@ export default function CategoriesProvider({ children }) {
     { categories, isLoading, selectedCategory, error },
     categoriesDispatch,
   ] = useReducer(categoriesReducer, categoriesInitialState);
-  const { token } = useAuth();
+  const { accessToken } = JSON.parse(Cookies.get("userInfo"));
   async function fetchCategories() {
     try {
       categoriesDispatch({ type: "loading" });
       const { data } = await axios.get(`${BASE_URL}/category`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       categoriesDispatch({ type: "categories/loaded", payload: data.data });
     } catch (error) {
@@ -82,14 +81,14 @@ export default function CategoriesProvider({ children }) {
     }
   }
   useEffect(() => {
-    if (token) fetchCategories();
-  }, [token]);
+    if (accessToken) fetchCategories();
+  }, [accessToken]);
 
   async function getCategory(id) {
     try {
       categoriesDispatch({ type: "loading" });
       const { data } = await axios.get(`${BASE_URL}/category/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       categoriesDispatch({ type: "category/loaded", payload: data.data });
     } catch (error) {
@@ -109,7 +108,7 @@ export default function CategoriesProvider({ children }) {
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -156,7 +155,7 @@ export default function CategoriesProvider({ children }) {
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -193,7 +192,7 @@ export default function CategoriesProvider({ children }) {
     try {
       categoriesDispatch({ type: "loading" });
       await axios.delete(`${BASE_URL}/delete-category/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       categoriesDispatch({ type: "category/deleted", payload: id });
     } catch (error) {

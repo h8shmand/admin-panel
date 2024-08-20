@@ -5,7 +5,7 @@ import { PiWarningOctagonFill } from "react-icons/pi";
 import FormikInput from "./formikInputs/FormikInput";
 import axios from "axios";
 import Loader from "./Loader";
-import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "./context/AuthProvider";
 const initialValues = {
   email: "",
@@ -25,7 +25,7 @@ const validationSchema = Yup.object({
 });
 
 export default function Login() {
-  const { login, isLoading, user } = useAuth();
+  const { login, isLoading } = useAuth();
 
   const onSubmit = async (values) => {
     login(values);

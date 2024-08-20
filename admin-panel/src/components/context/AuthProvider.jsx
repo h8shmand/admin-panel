@@ -12,67 +12,14 @@ import { Slide, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const AuthContext = createContext();
 
-const authInitialState = {
-  user: null,
-  isAuthenticated: false,
-  token: "",
-};
-function authReducer(state, action) {
-  switch (action.type) {
-    case "login":
-      return {
-        user: action.payload,
-        isAuthenticated: true,
-        token: action.payload.accessToken,
-      };
-    case "loadData":
-      return {
-        user: action.payload().user,
-        isAuthenticated: action.payload().isAuthenticated,
-        token: action.payload().token,
-      };
-    case "logout":
-      return {
-        user: null,
-        isAuthenticated: false,
-        token: "",
-      };
-    default:
-      throw new Error("unknown action has been taken!");
-  }
-}
-
 export default function AuthProvider({ children }) {
-  const [{ user, isAuthenticated, token }, authDispatch] = useReducer(
-    authReducer,
-    authInitialState
-  );
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  useEffect(() => {
-    if (isAuthenticated || Cookies.get("userInfos"))
-      authDispatch({ type: "loadData", payload: getCookies });
-  }, []);
-  function setCookies(res) {
-    Cookies.set(
-      "userInfos",
-      JSON.stringify({
-        user: res.data.data,
-        isAuthenticated: true,
-        token: res.data.data.accessToken,
-      }),
-      {
-        expires: 1,
-        secure: true,
-      }
-    );
-  }
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   function removeCookies() {
-    Cookies.remove("userInfos");
+    Cookies.remove("userInfo");
   }
-  function getCookies() {
-    return JSON.parse(Cookies.get("userInfos"));
-  }
+
   async function login(values) {
     try {
       setIsLoading(true);
@@ -81,8 +28,16 @@ export default function AuthProvider({ children }) {
         values
       );
       if (res) {
-        setCookies(res);
-        authDispatch({ type: "login", payload: res.data.data });
+        Cookies.set(
+          "userInfo",
+          JSON.stringify({ ...res.data.data, isAuthenticated: true }),
+          {
+            expires: 1,
+            secure: true,
+            sameSite: "Strict",
+          }
+        );
+        setIsAuthenticated(true);
         navigate("/dashboard");
         toast.success(res.data.data.message, {
           position: "top-center",
@@ -120,14 +75,11 @@ export default function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        user,
-        isAuthenticated,
-        token,
         isLoading,
         login,
         logout,
-        getCookies,
         removeCookies,
+        isAuthenticated,
       }}
     >
       {children}
