@@ -152,7 +152,7 @@ export default function UsersProvider({ children }) {
       fetchUsers();
       usersDispatch({ type: "user/created", payload: data });
     } catch (error) {
-      toast.error(error.response.data.messages[0].message, {
+      toast.error(error.response.data.message[0].message, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -222,7 +222,7 @@ export default function UsersProvider({ children }) {
         secure: true,
         sameSite: "Strict",
       });
-      // window.location.reload();
+      window.location.reload();
       toast.success(res.data.message, {
         position: "top-center",
         autoClose: 3500,

@@ -119,6 +119,7 @@ export default function ArticlesProvider({ children }) {
           "Content-Type": "multipart/form-data",
         },
       });
+
       toast.success(res.data.data[0].message, {
         position: "top-center",
         autoClose: 3500,
@@ -134,18 +135,34 @@ export default function ArticlesProvider({ children }) {
       fetchArticles();
       articlesDispatch({ type: "article/created", payload: data });
     } catch (error) {
-      toast.error(error.response.data.messages[0].message, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        progress: undefined,
-        draggable: true,
-        theme: "light",
-        transition: Slide,
-        rtl: true,
-      });
+      console.log(error);
+      if (error.response.data.message) {
+        toast.error(error.response.data.message[0].message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          progress: undefined,
+          draggable: true,
+          theme: "light",
+          transition: Slide,
+          rtl: true,
+        });
+      } else if (error.response.data.messages) {
+        toast.error(error.response.data.messages[0].message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          progress: undefined,
+          draggable: true,
+          theme: "light",
+          transition: Slide,
+          rtl: true,
+        });
+      }
     }
   }
   async function updateArticle(updatedArticle, id) {

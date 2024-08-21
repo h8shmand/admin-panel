@@ -11,6 +11,7 @@ const tableHeaders = ["نام و نام خانوادگی", "ایمیل", "نقش
 
 export default function Users() {
   const [formVisible, setFormVisible] = useState(false);
+  const { userId } = JSON.parse(Cookies.get("userInfo"));
   const [updateFormVisible, setUpdateFormVisible] = useState(false);
   const { users, selectedUser, getUser, discardSelectedUser } = useUsers();
   const handleCreateForm = () => {
@@ -44,24 +45,30 @@ export default function Users() {
           <NoItemsFound />
         ) : (
           <Table tableHeaders={tableHeaders}>
-            {users.map((item) => (
-              <tr key={item.id} className="border-b-2 border-gray-200 h-12">
-                <td>{item.fullName}</td>
-                <td>{item.email}</td>
-                <td>{item.isAdmin ? "مدیر" : "نویسنده"}</td>
-                <td>-</td>
-                <td>
-                  <div className="flex flex-row items-center">
-                    <button
-                      className="edit-btn bg-green-500 text-white h-7 rounded-lg w-14 ml-2"
-                      onClick={(e) => handleEdit(e, item.id)}
-                    >
-                      ویرایش
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {users.map((item) => {
+              if (item.id === userId) {
+                return;
+              } else {
+                return (
+                  <tr key={item.id} className="border-b-2 border-gray-200 h-12">
+                    <td>{item.fullName}</td>
+                    <td>{item.email}</td>
+                    <td>{item.isAdmin ? "مدیر" : "نویسنده"}</td>
+                    <td>-</td>
+                    <td>
+                      <div className="flex flex-row items-center">
+                        <button
+                          className="edit-btn bg-green-500 text-white h-7 rounded-lg w-14 ml-2"
+                          onClick={(e) => handleEdit(e, item.id)}
+                        >
+                          ویرایش
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              }
+            })}
           </Table>
         )}
       </div>

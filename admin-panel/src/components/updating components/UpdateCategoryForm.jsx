@@ -19,8 +19,6 @@ export default function UpdateCategoryForm({
   setVisible,
   categoryValues,
 }) {
-  console.log(categoryValues);
-
   const { updateCategory, discardSelectedCategory } = useCategories();
   const initialValues = {
     title: categoryValues?.name,
