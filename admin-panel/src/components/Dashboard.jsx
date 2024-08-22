@@ -9,7 +9,7 @@ export default function Dashboard() {
   const { categories } = useCategories();
   const { articles } = useArticles();
   return (
-    <div className="dashboard-container h-full w-full flex overflow-y-auto">
+    <div className="dashboard-container h-full w-full flex overflow-y-auto bg-white dark:bg-darkBody">
       <div className="cards-list w-full flex flex-row flex-wrap h-fit justify-center">
         <DashboardCards title={"تعداد کاربران:"} count={users.length || "-"} />
         <DashboardCards

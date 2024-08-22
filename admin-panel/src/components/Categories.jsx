@@ -46,8 +46,8 @@ export default function Categories() {
         setVisible={setUpdateFormVisible}
         categoryValues={selectedCategory}
       />
-      <div className="categories-container w-full h-full p-4">
-        <h2 className="font-bold text-mainBlue text-2xl block mb-4">
+      <div className="categories-container w-full h-full p-4 dark:bg-darkBody">
+        <h2 className="font-bold text-mainBlue text-2xl block mb-4 dark:text-white">
           لیست دسته بندی ها
         </h2>
         <SimpleButton text="افزودن دسته بندی" onClick={handleCreateForm}>
@@ -58,7 +58,10 @@ export default function Categories() {
         ) : (
           <Table key={1} tableHeaders={tableHeaders}>
             {categories.map((item) => (
-              <tr key={item.id} className="border-b-2 border-gray-200">
+              <tr
+                key={item.id}
+                className="border-b-2 border-gray-200 dark:border-gray-500 h-12 [&>*]: dark:text-white"
+              >
                 <td>{item.name}</td>
                 <td>{item.description}</td>
                 <td>

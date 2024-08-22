@@ -45,18 +45,18 @@ export default function UpdateArticleForm({
   return (
     <div
       onClick={handleCloseForm}
-      className={`back-drop bg-black/20 w-full h-full backdrop-blur z-10 absolute flex items-center justify-center ${
+      className={`back-drop bg-black/20 dark:bg-white/20 w-full h-full backdrop-blur z-10 absolute flex items-center justify-center ${
         visible ? "" : "hidden"
       }`}
     >
-      <div className="w-[85%] h-fit bg-white rounded-lg relative z-20 shadow-light">
+      <div className="w-[85%] h-fit bg-white dark:bg-darkBody rounded-lg relative z-20 shadow-light">
         <button
           onClick={handleCloseForm}
           className="absolute right-2 top-2 w-fit h-fit"
         >
-          <FaTimes className="text-mainBlue pointer-events-none" />
+          <FaTimes className="text-mainBlue dark:text-white pointer-events-none" />
         </button>
-        <h2 className="text-xl text-mainBlue block w-full pr-6 mt-10">
+        <h2 className="text-xl text-mainBlue dark:text-white block w-full pr-6 mt-10">
           ویرایش مقاله
         </h2>
         <form

@@ -52,8 +52,8 @@ export default function Products() {
         setVisible={setUpdateFormVisible}
         productValues={selectedProduct}
       />
-      <div className="products-container w-full h-full p-4">
-        <h2 className="font-bold text-mainBlue text-2xl block mb-4">
+      <div className="products-container w-full h-full p-4 dark:bg-darkBody">
+        <h2 className="font-bold text-mainBlue text-2xl block mb-4 dark:text-white">
           لیست محصولات
         </h2>
         <SimpleButton text="افزودن محصول جدید" onClick={handleCreateForm}>
@@ -64,7 +64,10 @@ export default function Products() {
         ) : (
           <Table key={2} tableHeaders={tableHeaders}>
             {products.map((item) => (
-              <tr key={item.id} className="border-b-2 border-gray-200">
+              <tr
+                key={item.id}
+                className="border-b-2 border-gray-200 dark:border-gray-500 h-12 [&>*]: dark:text-white"
+              >
                 <td>{item.title}</td>
                 <td>{item.category?.name}</td>
                 <td>{item.user?.fullName}</td>

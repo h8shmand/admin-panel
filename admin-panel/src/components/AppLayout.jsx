@@ -29,7 +29,7 @@ export default function AppLayout() {
         setIsOptionManuOpen={setIsOptionManuOpen}
       />
       <div className="app-layout h-[95%] w-full flex flex-row-reverse items-center relative overflow-hidden">
-        <div className="item-app-layout bg-white w-[85%] mr-2 shadow-light rounded-lg h-[99%] relative max-[800px]:w-full max-[800px]:mr-0">
+        <div className="item-app-layout overflow-hidden bg-white w-[85%] mr-2 shadow-light rounded-lg h-[99%] relative max-[800px]:w-full max-[800px]:mr-0">
           <Outlet />
         </div>
         <SideBar isMenuOpen={isMenuOpen} setIsMenuOpen={setIsManuOpen} />

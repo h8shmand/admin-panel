@@ -47,8 +47,8 @@ export default function Articles() {
         setVisible={setUpdateFormVisible}
         articleValues={selectedArticle}
       />
-      <div className="categories-container w-full h-full p-4">
-        <h2 className="font-bold text-mainBlue text-2xl block mb-4">
+      <div className="categories-container w-full h-full p-4 dark:bg-darkBody">
+        <h2 className="font-bold text-mainBlue text-2xl block mb-4 dark:text-white">
           لیست مقالات
         </h2>
         <SimpleButton text="افزودن مقاله جدید" onClick={handleCreateForm}>
@@ -59,7 +59,10 @@ export default function Articles() {
         ) : (
           <Table tableHeaders={tableHeaders}>
             {articles.map((item) => (
-              <tr key={item.id} className="border-b-2 border-gray-200">
+              <tr
+                key={item.id}
+                className="border-b-2 border-gray-200 dark:border-gray-500 h-12 [&>*]: dark:text-white"
+              >
                 <td>{item.title}</td>
                 <td>{item.user?.fullName}</td>
                 <td>{item.numViews}</td>

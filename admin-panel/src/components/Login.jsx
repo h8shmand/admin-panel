@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { PiWarningOctagonFill } from "react-icons/pi";
 import FormikInput from "./formikInputs/FormikInput";
@@ -7,6 +7,7 @@ import axios from "axios";
 import Loader from "./Loader";
 
 import { useAuth } from "./context/AuthProvider";
+import { useNavigate } from "react-router-dom";
 const initialValues = {
   email: "",
   password: "",
@@ -26,7 +27,11 @@ const validationSchema = Yup.object({
 
 export default function Login() {
   const { login, isLoading } = useAuth();
+  const { isAuthenticated } = JSON.parse(
+    Cookies.get("userInfo") || '{ "isAuthenticated": false }'
+  );
 
+  const navigate = useNavigate();
   const onSubmit = async (values) => {
     login(values);
   };
@@ -37,6 +42,12 @@ export default function Login() {
     validationSchema,
     validateOnMount: true,
   });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [navigate, isAuthenticated]);
   return (
     <div className="login-container w-screen m-0 h-screen flex items-center justify-center bg-gray-300">
       {isLoading && <Loader />}

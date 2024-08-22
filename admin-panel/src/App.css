@@ -35,28 +35,58 @@ td {
   transform: scale(0.6, 1) translate(0, 5.5px) rotate(20deg);
 }
 
-/* Fade out the second bar */
 .change .line2 {
-  /* opacity: 0; */
   transform: scale(0.9, 1) translate(-9px, 0);
 }
 
-/* Rotate last bar */
 .change .line3 {
   transform: scale(0.6, 1) translate(0, -5.5px) rotate(-20deg);
 }
 
 .open {
   transform: translate(-266px, 0);
+  transition: transform 0.4s;
+}
+
+.closed {
+  transition: transform 0.4s;
 }
 
 button:disabled,
-button[disabled] {
+button[disabled],
+select:disabled,
+select[disabled],
+input:disabled,
+input[disabled] {
   border: 1px solid #999999;
   background-color: #cccccc;
   color: #666666;
+  cursor: not-allowed;
 }
 
 td {
   overflow-x: hidden;
+}
+
+* {
+  transition: color 0.2s ease-in, background 0.5s ease-in;
+  transition-delay: 0s;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: whitesmoke;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #006078;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #014d61;
 }

@@ -34,8 +34,8 @@ export default function Users() {
         setVisible={setUpdateFormVisible}
         userValues={selectedUser}
       />
-      <div className="products-container w-full h-full p-4">
-        <h2 className="font-bold text-mainBlue text-2xl block mb-4">
+      <div className="users-container dark:bg-darkBody w-full h-full p-4">
+        <h2 className="font-bold text-mainBlue dark:text-white text-2xl block mb-4">
           لیست کاربران
         </h2>
         <SimpleButton text="افزودن کاربر جدید" onClick={handleCreateForm}>
@@ -50,7 +50,10 @@ export default function Users() {
                 return;
               } else {
                 return (
-                  <tr key={item.id} className="border-b-2 border-gray-200 h-12">
+                  <tr
+                    key={item.id}
+                    className="border-b-2 border-gray-200 dark:border-gray-500 h-12 [&>*]: dark:text-white"
+                  >
                     <td>{item.fullName}</td>
                     <td>{item.email}</td>
                     <td>{item.isAdmin ? "مدیر" : "نویسنده"}</td>

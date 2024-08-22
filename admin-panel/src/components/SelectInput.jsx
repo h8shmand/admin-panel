@@ -12,14 +12,14 @@ export default function SelectInput({
 }) {
   return (
     <div className="w-[70%] relative">
-      <label htmlFor={name} className="block text-right">
+      <label htmlFor={name} className="block text-right dark:text-white">
         {label}
       </label>
       <select
         name={name}
         disabled={disabled}
         onChange={(e) => setSeletedValue(e.target.value)}
-        className={`border-2 outline-0 border-mainBlue rounded w-full h-10 text-sm px-2 ${
+        className={`border-2 outline-0 dark:bg-darkBody dark:text-white border-mainBlue rounded w-full h-10 text-sm px-2 ${
           selectedValue === "-" ? "border-red-500" : ""
         }`}
       >

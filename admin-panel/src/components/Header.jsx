@@ -40,13 +40,13 @@ export default function Header({
   //     />
   //   );
   return (
-    <div className="header shadow-light bg-mainBlue rounded-lg w-full h-[5%] min-h-[50px] box-border flex flex-row-reverse items-center justify-between">
+    <div className="header shadow-light bg-mainBlue dark:bg-darkHead rounded-lg w-full h-[5%] min-h-[50px] box-border flex flex-row-reverse items-center justify-between">
       <button
         className="user-information mx-3 flex flex-row-reverse items-center space-x-2 min-w-[185px] relative"
         onClick={() => setIsOptionManuOpen(!isOptionMenuOpen)}
       >
         <div
-          className={`options-menu w-full bg-white rounded-lg shadow-light h-fit z-50 flex flex-col items-center top-[48px] ${
+          className={`options-menu w-full bg-white dark:bg-darkHead rounded-lg shadow-light h-fit z-50 flex flex-col items-center top-[48px] ${
             isOptionMenuOpen ? "absolute" : "hidden"
           }`}
         >
@@ -54,18 +54,17 @@ export default function Header({
             className="close-session flex flex-row items-center my-2"
             onClick={handleCloseSession}
           >
-            <p className="ml-2">خروج از حساب</p>
-            <MdLogout />
+            <p className="ml-2 dark:text-white">خروج از حساب</p>
+            <MdLogout className="dark:text-white" />
           </div>
           <div className="change-information flex flex-row items-center my-2">
             <div
-              className="ml-2"
-              to={"updateProfile"}
+              className="ml-2 dark:text-white"
               onClick={(e) => handleEdit(e)}
             >
               ویرایش اطلاعات
             </div>
-            <MdEdit />
+            <MdEdit className="dark:text-white" />
           </div>
         </div>
         <img className="h-11 w-11 rounded-full" src={url} alt="profile" />

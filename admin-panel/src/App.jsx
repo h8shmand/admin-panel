@@ -16,7 +16,6 @@ import ArticlesProvider from "./components/context/ArticlesProvider";
 import UpdateUserForm from "./components/updating components/UpdateUserForm";
 import UpdateProfileForm from "./components/updating components/UpdateProfileForm";
 import { useEffect } from "react";
-import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -62,7 +61,6 @@ function Redirect() {
   );
 
   const navigate = useNavigate();
-  console.log(isAuthenticated);
 
   useEffect(() => {
     if (!isAuthenticated) {

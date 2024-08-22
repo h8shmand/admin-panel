@@ -20,13 +20,13 @@ const validationSchema = Yup.object({
     .email("لطفا یک ایمیل معتبر وارد کنید")
     .required("ایمیل را وارد کنید"),
   password: Yup.string()
-    .required()
+    .required("گذرواژه را وارد کنید")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
       "گذرواژه باید شامل حداقل 8 کاراکتر شامل حروف کوچک و حداقل یک حرف بزرگ، عدد و علامت باشد"
     ),
   confPassword: Yup.string()
-    .required()
+    .required("تکرار گذرواژه را وارد کنید")
     .oneOf([Yup.ref("password"), null], "گذرواژه و تکرار آن برابر نمی باشد"),
   image: Yup.mixed(),
 });
@@ -59,10 +59,10 @@ export default function UpdateProfileForm() {
   });
   return (
     <div
-      className={`back-drop bg-black/20 w-full h-full backdrop-blur z-10 absolute flex items-center justify-center`}
+      className={`back-drop bg-black/20 dark:bg-black/80 w-full h-full backdrop-blur z-10 absolute flex items-center justify-center`}
     >
-      <div className="w-[85%] h-[92%] bg-white rounded-lg relative z-20 shadow-light overflow-y-auto">
-        <h2 className="text-xl text-mainBlue block w-full pr-6 mt-10">
+      <div className="w-[85%] h-[92%] bg-white dark:bg-darkBody rounded-lg relative z-20 shadow-light overflow-y-auto">
+        <h2 className="text-xl text-mainBlue dark:text-white block w-full pr-6 mt-10">
           ویرایش پروفایل
         </h2>
 

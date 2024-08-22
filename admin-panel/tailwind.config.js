@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: "selector",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
@@ -8,8 +9,11 @@ export default {
       },
       colors: {
         mainBlue: "#006078",
+        darkBody: "#161b22",
+        darkHead: "#0d1117",
       },
     },
   },
+
   plugins: [],
 };
