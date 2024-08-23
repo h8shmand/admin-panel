@@ -90,6 +90,7 @@ export default function ArticlesProvider({ children }) {
       });
       articlesDispatch({ type: "article/loaded", payload: data.data });
     } catch (error) {
+      articlesDispatch({ type: "rejected", payload: error });
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,
@@ -135,7 +136,7 @@ export default function ArticlesProvider({ children }) {
       fetchArticles();
       articlesDispatch({ type: "article/created", payload: data });
     } catch (error) {
-      console.log(error);
+      articlesDispatch({ type: "rejected", payload: error });
       if (error.response.data.message) {
         toast.error(error.response.data.message[0].message, {
           position: "top-center",
@@ -193,6 +194,7 @@ export default function ArticlesProvider({ children }) {
       });
       fetchArticles();
     } catch (error) {
+      articlesDispatch({ type: "rejected", payload: error });
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,
@@ -215,6 +217,7 @@ export default function ArticlesProvider({ children }) {
       });
       articlesDispatch({ type: "article/deleted", payload: id });
     } catch (error) {
+      articlesDispatch({ type: "rejected", payload: error });
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,

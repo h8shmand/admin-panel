@@ -7,6 +7,7 @@ import { useArticles } from "./context/ArticlesProvider";
 import NoItemsFound from "./NoItemsFound";
 import UpdateArticleForm from "./updating components/UpdateArticlesForm";
 import SortButtons from "./SortButtons";
+import Loader from "./Loader";
 
 const tableHeaders = [
   "عنوان مقاله",
@@ -24,7 +25,7 @@ export default function Articles() {
   const [updateFormVisible, setUpdateFormVisible] = useState(false);
   const [sort, setSort] = useState("date");
   const [ascDesc, setAscDesc] = useState("asc");
-  const { articles, deleteArticle, getArticle, selectedArticle } =
+  const { articles, deleteArticle, getArticle, selectedArticle, isLoading } =
     useArticles();
   const handleCreateForm = () => {
     setFormVisible(!formVisible);
@@ -51,6 +52,7 @@ export default function Articles() {
   };
   return (
     <div className="w-full h-full">
+      {isLoading && <Loader />}
       <CreateArticleForm visible={formVisible} setVisible={setFormVisible} />
       <UpdateArticleForm
         visible={updateFormVisible}

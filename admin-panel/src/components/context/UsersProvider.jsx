@@ -98,6 +98,7 @@ export default function UsersProvider({ children }) {
       });
       usersDispatch({ type: "user/loaded", payload: data.data });
     } catch (error) {
+      usersDispatch({ type: "rejected", payload: error });
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,
@@ -120,8 +121,7 @@ export default function UsersProvider({ children }) {
       });
       usersDispatch({ type: "profile/loaded", payload: data.data });
     } catch (error) {
-      console.log(error);
-
+      usersDispatch({ type: "rejected", payload: error });
       toast.error(error.response.data.message[0].message, {
         position: "top-center",
         autoClose: 5000,
@@ -149,10 +149,23 @@ export default function UsersProvider({ children }) {
       const { data } = await axios.post(`${BASE_URL}/users/register`, req, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
+      toast.success(data.data.message, {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        progress: undefined,
+        draggable: true,
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
+        transition: Slide,
+        rtl: true,
+      });
       fetchUsers();
       usersDispatch({ type: "user/created", payload: data });
     } catch (error) {
-      toast.error(error.response.data.message[0].message, {
+      usersDispatch({ type: "rejected", payload: error });
+      toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -186,6 +199,7 @@ export default function UsersProvider({ children }) {
         rtl: true,
       });
     } catch (error) {
+      usersDispatch({ type: "rejected", payload: error });
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,
@@ -236,6 +250,7 @@ export default function UsersProvider({ children }) {
         rtl: true,
       });
     } catch (error) {
+      usersDispatch({ type: "rejected", payload: error });
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,

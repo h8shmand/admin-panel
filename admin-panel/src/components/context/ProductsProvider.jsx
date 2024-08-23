@@ -91,6 +91,7 @@ export default function ProductsProvider({ children }) {
       });
       productsDispatch({ type: "product/loaded", payload: data.data });
     } catch (error) {
+      productsDispatch({ type: "rejected", payload: error });
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,
@@ -136,6 +137,7 @@ export default function ProductsProvider({ children }) {
       fetchProducts();
       productsDispatch({ type: "product/created", payload: data });
     } catch (error) {
+      productsDispatch({ type: "rejected", payload: error });
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,
@@ -201,6 +203,7 @@ export default function ProductsProvider({ children }) {
       });
       productsDispatch({ type: "product/deleted", payload: id });
     } catch (error) {
+      productsDispatch({ type: "rejected", payload: error });
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,

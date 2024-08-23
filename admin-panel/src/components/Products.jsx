@@ -7,6 +7,7 @@ import { useProducts } from "./context/ProductsProvider";
 import NoItemsFound from "./NoItemsFound";
 import UpdateProductForm from "./updating components/UpdateProductForm";
 import SortButtons from "./SortButtons";
+import Loader from "./Loader";
 
 const tableHeaders = [
   "عنوان محصول",
@@ -24,13 +25,8 @@ export default function Products() {
   const [updateFormVisible, setUpdateFormVisible] = useState(false);
   const [sort, setSort] = useState("date");
   const [ascDesc, setAscDesc] = useState("asc");
-  const {
-    products,
-    deleteProduct,
-    updateProduct,
-    getProduct,
-    selectedProduct,
-  } = useProducts();
+  const { products, deleteProduct, getProduct, selectedProduct, isLoading } =
+    useProducts();
   const handleCreateForm = () => {
     setFormVisible(!formVisible);
   };
@@ -56,6 +52,7 @@ export default function Products() {
   };
   return (
     <div className="w-full h-full">
+      {isLoading && <Loader />}
       <CreateProductForm visible={formVisible} setVisible={setFormVisible} />
       <UpdateProductForm
         visible={updateFormVisible}

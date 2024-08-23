@@ -6,6 +6,7 @@ import CreateUserForm from "./CreateUserForm";
 import { useUsers } from "./context/UsersProvider";
 import UpdateUserForm from "./updating components/UpdateUserForm";
 import NoItemsFound from "./NoItemsFound";
+import Loader from "./Loader";
 
 const tableHeaders = ["نام و نام خانوادگی", "ایمیل", "نقش", "تاریخ ایجاد", ""];
 
@@ -13,7 +14,7 @@ export default function Users() {
   const [formVisible, setFormVisible] = useState(false);
   const { userId } = JSON.parse(Cookies.get("userInfo"));
   const [updateFormVisible, setUpdateFormVisible] = useState(false);
-  const { users, selectedUser, getUser, discardSelectedUser } = useUsers();
+  const { users, selectedUser, getUser, isLoading } = useUsers();
   const handleCreateForm = () => {
     setFormVisible(!formVisible);
   };
@@ -28,6 +29,7 @@ export default function Users() {
   }, [selectedUser]);
   return (
     <div className="w-full h-full">
+      {isLoading && <Loader />}
       <CreateUserForm visible={formVisible} setVisible={setFormVisible} />
       <UpdateUserForm
         visible={updateFormVisible}
