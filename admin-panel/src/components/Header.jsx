@@ -13,7 +13,9 @@ export default function Header({
 }) {
   const navigate = useNavigate();
   const { removeCookies } = useAuth();
-  const { fullName, userId, url } = JSON.parse(Cookies.get("userInfo"));
+  const { fullName, userId, url, isAdmin } = JSON.parse(
+    Cookies.get("userInfo")
+  );
   const { getProfile, selectedProfile } = useUsers();
 
   function handleCloseSession() {
@@ -46,7 +48,7 @@ export default function Header({
         onClick={() => setIsOptionManuOpen(!isOptionMenuOpen)}
       >
         <div
-          className={`options-menu w-full bg-white dark:bg-darkHead rounded-lg shadow-light h-fit z-50 flex flex-col items-center top-[48px] ${
+          className={`options-menu w-full bg-white dark:bg-darkHead dark:border-2 dark:border-white rounded-lg shadow-light h-fit z-50 flex flex-col items-center top-[48px] ${
             isOptionMenuOpen ? "absolute" : "hidden"
           }`}
         >
@@ -67,8 +69,17 @@ export default function Header({
             <MdEdit className="dark:text-white" />
           </div>
         </div>
-        <img className="h-11 w-11 rounded-full" src={url} alt="profile" />
-        <h3 className="text-gray-100 ">{fullName}</h3>
+        <img
+          className="h-11 w-11 rounded-full border-2 border-white"
+          src={url || "/images/defaultProfile.jpg"}
+          alt="profile"
+        />
+        <div>
+          <h3 className="text-gray-100 ">{fullName}</h3>
+          <p className="text-gray-300 text-xs text-right pr-2">
+            {isAdmin ? "مدیر" : "نویسنده"}
+          </p>
+        </div>
         <IoIosArrowDown
           className={`text-white ml-2 ${
             isOptionMenuOpen

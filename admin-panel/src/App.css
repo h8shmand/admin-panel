@@ -78,7 +78,7 @@ td {
 }
 
 ::-webkit-scrollbar-track {
-  background: whitesmoke;
+  background: rgb(151, 151, 151);
   border-radius: 5px;
 }
 

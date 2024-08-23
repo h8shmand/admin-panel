@@ -106,7 +106,7 @@ export default function UsersProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });
@@ -130,7 +130,7 @@ export default function UsersProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });
@@ -160,7 +160,7 @@ export default function UsersProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });
@@ -181,7 +181,7 @@ export default function UsersProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });
@@ -194,7 +194,7 @@ export default function UsersProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });
@@ -231,7 +231,7 @@ export default function UsersProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });
@@ -244,7 +244,7 @@ export default function UsersProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });

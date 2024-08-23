@@ -1,7 +1,7 @@
 export default function Table({ tableHeaders, children }) {
   return (
     <div className="block w-full overflow-x-auto mt-10 overflow-y-auto h-[75%]">
-      <table className="w-full table-fixed min-w-[1247px]">
+      <table className="w-full table-fixed min-w-[1236px]">
         <thead>
           <tr className="border-b-2 border-gray-500 dark:border-gray-200">
             {tableHeaders.map((item, index) => (

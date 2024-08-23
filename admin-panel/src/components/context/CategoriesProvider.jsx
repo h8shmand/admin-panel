@@ -113,6 +113,7 @@ export default function CategoriesProvider({ children }) {
           },
         }
       );
+      categoriesDispatch({ type: "category/created", payload: data });
       toast.success(data.data[0].message, {
         position: "top-center",
         autoClose: 3500,
@@ -121,13 +122,13 @@ export default function CategoriesProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });
       fetchCategories();
-      categoriesDispatch({ type: "category/created", payload: data });
     } catch (error) {
+      categoriesDispatch({ type: "rejected" });
       if (error.response.data.message) {
         toast.error(error.response.data.message[0].message, {
           position: "top-center",
@@ -137,7 +138,7 @@ export default function CategoriesProvider({ children }) {
           pauseOnHover: true,
           progress: undefined,
           draggable: true,
-          theme: "light",
+          theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
           transition: Slide,
           rtl: true,
         });
@@ -150,7 +151,7 @@ export default function CategoriesProvider({ children }) {
           pauseOnHover: true,
           progress: undefined,
           draggable: true,
-          theme: "light",
+          theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
           transition: Slide,
           rtl: true,
         });
@@ -183,7 +184,7 @@ export default function CategoriesProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });
@@ -197,7 +198,7 @@ export default function CategoriesProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });
@@ -211,6 +212,7 @@ export default function CategoriesProvider({ children }) {
       });
       categoriesDispatch({ type: "category/deleted", payload: id });
     } catch (error) {
+      categoriesDispatch({ type: "rejected" });
       toast.error(error.response.data.messages[0].message, {
         position: "top-center",
         autoClose: 5000,
@@ -219,7 +221,7 @@ export default function CategoriesProvider({ children }) {
         pauseOnHover: true,
         progress: undefined,
         draggable: true,
-        theme: "light",
+        theme: localStorage.getItem("darkMode") === "true" ? "dark" : "light",
         transition: Slide,
         rtl: true,
       });
