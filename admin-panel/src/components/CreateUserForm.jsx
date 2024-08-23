@@ -35,7 +35,7 @@ const validationSchema = Yup.object({
 });
 export default function CreateUserForm({ visible, setVisible }) {
   const { createUser } = useUsers();
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("-");
   const handleCloseForm = (e) => {
     if (e.target === e.currentTarget) {
       setVisible(false);
@@ -101,7 +101,7 @@ export default function CreateUserForm({ visible, setVisible }) {
           />
 
           <button
-            disabled={!formik.isValid}
+            disabled={!formik.isValid || role === "-"}
             type="submit"
             className="w-fit py-1 px-6 bg-mainBlue rounded flex items-center text-white my-8"
           >

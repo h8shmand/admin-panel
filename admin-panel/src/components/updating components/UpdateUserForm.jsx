@@ -105,7 +105,7 @@ export default function UpdateUserForm({ visible, setVisible, userValues }) {
           />
 
           <button
-            disabled={!formik.isValid}
+            disabled={!formik.isValid || role === "-"}
             type="submit"
             className="w-fit py-1 px-6 bg-mainBlue rounded flex items-center text-white my-8"
           >

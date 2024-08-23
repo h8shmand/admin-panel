@@ -90,3 +90,9 @@ td {
 ::-webkit-scrollbar-thumb:hover {
   background: #014d61;
 }
+
+input:focus,
+select:focus,
+textarea:focus {
+  box-shadow: 0px 0px 7px #006078;
+}

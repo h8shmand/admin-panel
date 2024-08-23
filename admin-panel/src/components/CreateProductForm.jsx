@@ -24,7 +24,7 @@ const validationSchema = Yup.object({
 export default function CreateProductForm({ visible, setVisible }) {
   const { createProduct } = useProducts();
   const { categories } = useCategories();
-  const [categoryId, setCategoryId] = useState("");
+  const [categoryId, setCategoryId] = useState("-");
 
   const handleCloseForm = (e) => {
     if (e.target === e.currentTarget) {
@@ -85,7 +85,7 @@ export default function CreateProductForm({ visible, setVisible }) {
             className="h-24"
           />
           <button
-            disabled={!formik.isValid}
+            disabled={!formik.isValid || categoryId === "-"}
             type="submit"
             className="w-fit py-1 px-6 bg-mainBlue rounded flex items-center text-white my-8"
           >
